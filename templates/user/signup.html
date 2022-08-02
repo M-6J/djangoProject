@@ -20,6 +20,11 @@
                    value="{{ form.password1.value|default_if_none:'' }}">
         </div>
         <div class="mb-3">
+            <label for="position">职级</label>
+            <input type="position" class="form-control" name="position" id="position"
+                   value="{{ form.position.value|default_if_none:'' }}">
+        </div>
+        <div class="mb-3">
             <label for="password2">密码确认</label>
             <input type="password" class="form-control" name="password2" id="password2"
                    value="{{ form.password2.value|default_if_none:'' }}">
