@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'team.apps.TeamConfig',
     'user.apps.UserConfig',
-    'pybo.apps.PyboConfig',
+    'project.apps.ProjectConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

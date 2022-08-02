@@ -15,7 +15,7 @@
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>
-                <a href="{% url 'pybo:detail' question.id %}">{{ question.subject }}</a>
+                <a href="{% url 'project:detail' question.id %}">{{ question.subject }}</a>
             </td>
             <td>{{ question.create_date }}</td>
         </tr>
@@ -27,6 +27,6 @@
         {% endif %}
         </tbody>
     </table>
-    <a href="{% url 'pybo:question_create' %}" class="btn btn-primary">创建项目</a>
+    <a href="{% url 'project:project_create' %}" class="btn btn-primary">创建项目</a>
 </div>
 {% endblock %}
