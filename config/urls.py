@@ -16,11 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from project import views
+from task import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('project/', include('project.urls')),
+    path('task/', include('task.urls')),
     path('user/', include('user.urls')),
     path('', views.index, name='index'),  # '/' 에 해당되는 path
 ]

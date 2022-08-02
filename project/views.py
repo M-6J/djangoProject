@@ -8,12 +8,12 @@ from .forms import ProjectForm
 def index(request):
     question_list = Project.objects.order_by('-create_date')
     context = {'question_list': question_list}
-    return render(request, 'project/question_list.html', context)
+    return render(request, 'project/task_list.html', context)
 
 def detail(request, question_id):
     question = Project.objects.get(id=question_id)
     context = {'question': question}
-    return render(request, 'project/question_detail.html', context)
+    return render(request, 'project/task_detail.html', context)
 
 def project_create(request):
     if request.method == 'POST':
@@ -26,4 +26,4 @@ def project_create(request):
     else:
         form = ProjectForm()
     context = {'form': form}
-    return render(request, 'project/project_form.html', context)
+    return render(request, 'project/task_form.html', context)
