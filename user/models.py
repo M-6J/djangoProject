@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser)
 
-# 필요 내용
-# 이메일,이름, 비밀번호
-
 class UserManager(BaseUserManager):
     def create_user(self, email, username,position, password=None):
         if not email:

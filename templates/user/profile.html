@@ -6,7 +6,19 @@
     <title>Title</title>
 </head>
 <body>
-사용자 개인정보
+
+
+<div class="container my-3">
+    <div class="mb-3">
+        名字 ： {{ user.username }}
+    </div>
+    <div class="mb-3">
+        邮箱 ： {{ user.email }}
+    </div>
+    <div class="mb-3">
+        职级 ： {{ user.position }}
+    </div>
+</div>
 </body>
 </html>
 {% endblock %}
