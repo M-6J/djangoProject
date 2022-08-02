@@ -9,7 +9,6 @@ class manager(models.Model):
 class member(models.Model):
     member = models.ForeignKey(User,on_delete=models.CASCADE)
 
-
 class team(models.Model):
     teamname = models.CharField(max_length=30)
     description = models.CharField(max_length=30)
