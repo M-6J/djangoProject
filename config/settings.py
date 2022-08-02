@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'task.apps.TaskConfig',
     'team.apps.TeamConfig',
     'user.apps.UserConfig',
     'project.apps.ProjectConfig',
