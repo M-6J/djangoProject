@@ -18,6 +18,6 @@
         </tbody>
     </table>
     <a href="">删除文档</a>
-    <a href="">修改文档</a>
+    <a href="{% url 'file:filemodify' file.id %}">修改文档</a>
 </div>
 {% endblock %}

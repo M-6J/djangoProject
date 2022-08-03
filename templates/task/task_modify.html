@@ -22,17 +22,17 @@
         <div class="mb-3">
             <label for="task_name" class="form-label">task_name</label>
             <input type="text" class="form-control" name="task_name" id="task_name"
-                   value="{{ form.task_name.value|default_if_none:'' }}">
+                   value="{{ task.task_name }}">
         </div>
         <div class="mb-3">
             <label for="worker" class="form-label">员工</label>
             <input type="text" class="form-control" name="worker" id="worker"
-                   value="{{ form.worker.value|default_if_none:'' }}">
+                   value="{{ task.worker }}">
         </div>
         <div class="mb-3">
             <label for="status" class="form-label">状态</label>
             <textarea class="form-control" name="status"
-                      id="status" rows="10">{{ form.status.value|default_if_none:'' }}</textarea>
+                      id="status" rows="10">{{ task.status }}</textarea>
         </div>
         <button type="submit" class="btn btn-primary">项目Task</button>
     </form>

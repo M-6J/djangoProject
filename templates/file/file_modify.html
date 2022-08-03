@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <form method="POST" action="{% url 'file:fileupload' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            题目 ： <input type="text" name="title" value="{{ file.title }}">
+        </div>
+        <div>
+            文档 ： <input type="file" name="file">
+        </div>
+        <input type="submit" class="btn btn-primary col-12" value="上传">
+    </form>
+</div>
+{% endblock%}

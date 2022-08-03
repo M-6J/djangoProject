@@ -22,6 +22,6 @@
         </tbody>
     </table>
     <a href="">删除Task</a>
-    <a href="">修改Task</a>
+    <a href="{% url 'task:modify' task.id %}">修改Task</a>
 </div>
 {% endblock %}
