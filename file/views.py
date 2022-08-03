@@ -41,10 +41,12 @@ def fileUpload(request):
     if request.method == 'POST':
         title = request.POST['title']
         file = request.FILES["file"]
+        writer = request.user
         startdate = timezone.now()
         fileupload = FileUpload(
             title=title,
             file=file,
+            writer = writer,
             startdate = startdate,
         )
         fileupload.save()
