@@ -10,8 +10,8 @@ def index(request):
     context = {'task_list': task_list}
     return render(request, 'task/task_list.html', context)
 
-def detail(request, question_id):
-    task = Task.objects.get(id=question_id)
+def detail(request, task_id):
+    task = Task.objects.get(id=task_id)
     context = {'task': task}
     return render(request, 'task/task_detail.html', context)
 

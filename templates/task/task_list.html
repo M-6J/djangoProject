@@ -16,7 +16,7 @@
         {% if task_list %}
         {% for task in task_list %}
         <tr>
-            <td>{{ forloop.counter }}</td>
+            <td><a href="{% url 'task:detail' task.id %}">{{ forloop.counter }}</a></td>
             <td>{{ task.task_name }}</td>
             <td>{{ task.worker }}</td>
             <td>{{ task.startdate }}</td>
