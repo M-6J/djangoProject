@@ -20,6 +20,11 @@ def modify(request, task_id):
     context = {'task': task}
     return render(request, 'task/task_modify.html', context)
 
+def delete(request,task_id):
+    task = Task.objects.get(id=task_id)
+    task.delete()
+    return redirect('/')
+
 def task_create(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)

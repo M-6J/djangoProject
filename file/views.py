@@ -31,6 +31,12 @@ def fileModify(request,file_id):
             )
             fileupload.save()
             return redirect('/file/filelist/')
+
+def fileDelete(request,file_id):
+    file = FileUpload.objects.get(id=file_id)
+    file.delete()
+    return redirect('/file/filelist/')
+
 def fileUpload(request):
     if request.method == 'POST':
         title = request.POST['title']
