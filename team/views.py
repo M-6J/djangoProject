@@ -4,8 +4,8 @@ from django.shortcuts import render
 
 from .models import Team
 
-def detail(request,username):
+def detail(request):
 
-    team = Team.objects.get(id=username)
-    context = {'team': team}
+    team_list = Team.objects.all()
+    context = {'team_list': team_list}
     return render(request, 'team/team_detail.html', context)

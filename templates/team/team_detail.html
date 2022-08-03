@@ -1,10 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-hello
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-3">
+    <table class="table">
+        <thead>
+        <tr class="table-dark">
+            <th>编号</th>
+            <th>团队名字</th>
+            <th>团队说明</th>
+            <th>管理员</th>
+            <th>成员</th>
+            <th>Task</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for team in team_list %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ team.team_name }}</td>
+            <td>{{ team.description }}</td>
+            <td>{{ team.managers }}</td>
+            <td>{{ team.members }}</td>
+            <td>{{ team.task }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
