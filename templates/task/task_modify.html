@@ -29,11 +29,13 @@
             <input type="text" class="form-control" name="worker" id="worker"
                    value="{{ task.worker }}">
         </div>
+
         <div class="mb-3">
             <label for="status" class="form-label">状态</label>
             <textarea class="form-control" name="status"
                       id="status" rows="10">{{ task.status }}</textarea>
         </div>
+<!--        <input type="hidden" name="startdate" value="{{ task.startdate }}">-->
         <button type="submit" class="btn btn-primary">项目Task</button>
     </form>
 </div>

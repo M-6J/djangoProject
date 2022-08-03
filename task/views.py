@@ -16,9 +16,23 @@ def detail(request, task_id):
     return render(request, 'task/task_detail.html', context)
 
 def modify(request, task_id):
-    task = Task.objects.get(id=task_id)
-    context = {'task': task}
-    return render(request, 'task/task_modify.html', context)
+    if request.method == 'POST':
+        task_name = request.POST['task_name']
+        #worker = request.POST["worker"]
+        status = request.POST['status']
+        startdate = request.POST['startdate']
+        task = Task(
+            task_name=task_name,
+            #worker=worker,
+            status=status,
+            startdate = startdate,
+        )
+        task.save()
+        return redirect('/task/index')
+    else:
+        task = Task.objects.get(id=task_id)
+        context = {'task': task}
+        return render(request, 'task/task_modify.html', context)
 
 def delete(request,task_id):
     task = Task.objects.get(id=task_id)

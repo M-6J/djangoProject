@@ -19,7 +19,6 @@ def fileModify(request,file_id):
         context = {'file': file}
         return render(request,'file/file_modify.html',context)
     else:
-        print("test")
         if request.method == 'POST':
             title = request.POST['title']
             file = request.FILES["file"]
