@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.core import serializers
+from django.http import HttpResponseRedirect, HttpResponseForbidden, JsonResponse
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
 
@@ -19,8 +20,8 @@ class TeamCreateView(CreateView):  # User can make a Team
     def form_valid(self, form):
         obj = form.save(commit=False)
         user = self.request.user
-        obj.creator = user  # Creator -> creator&member
-        obj.member = user
+        obj.member.user = user
+        obj.member.role = 2  # Creator -> creator&member
         obj.save()
         return super().form_valid(form)
 
@@ -47,7 +48,6 @@ def del_team(request):  # Creator can del team
 # add decorators here, 'member only' for post, get
 class TeamDetailView(DetailView):
     model = Team
-    template_name = 'index.html'
     context_object_name = 'target_team'
 
     # get this_team.pk
@@ -55,14 +55,14 @@ class TeamDetailView(DetailView):
         team = self.object
 
         # query members below, and keep in context
-        object_list = User.objects.filter(team=team)
+        object_list = User.objects.filter(member__team__exact=team)
         context = super(TeamDetailView, self).get_context_data(object_list=object_list, **kwargs)
 
         # query tasks below, keep in context, and return context
-        tasks = Task.objects.filter(team=team)
+        tasks = Task.objects.filter(team__exact=team)
         context['tasks'] = tasks
-
-        return context
+        data = serializers.serialize('json', context)
+        return JsonResponse(data)
 
 
 # ============================================ Managing Members Here From, =============================================
