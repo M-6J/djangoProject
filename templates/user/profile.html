@@ -19,6 +19,8 @@
         职级 ： {{ user.position }}
     </div>
 </div>
+<a href="{% url 'user:modify' %}">信息修改</a>
+<a href="{% url 'user:delete' %}">注销会员</a>
 </body>
 </html>
 {% endblock %}

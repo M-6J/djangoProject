@@ -5,26 +5,20 @@
         {% csrf_token %}
         {% include "form_errors.html" %}
         <div class="mb-3">
-            <label for="email">邮箱</label>
-            <input type="text" class="form-control" name="email" id="email"
-                   value="{{ form.email.value|default_if_none:'' }}">
-        </div>
-        <div class="mb-3">
             <label for="username">名字</label>
             <input type="text" class="form-control" name="username" id="username"
-                   value="{{ form.username.value|default_if_none:'' }}">
+                   value="{{ user.username}}">
         </div>
         <div class="mb-3">
             <label for="position">职级</label>
             <input type="position" class="form-control" name="position" id="position"
-                   value="{{ form.position.value|default_if_none:'' }}">
+                   value="{{ user.position }}">
         </div>
         <div class="mb-3">
             <label for="password1">密码</label>
             <input type="password" class="form-control" name="password1" id="password1"
                    value="{{ form.password1.value|default_if_none:'' }}">
         </div>
-
         <div class="mb-3">
             <label for="password2">密码确认</label>
             <input type="password" class="form-control" name="password2" id="password2"

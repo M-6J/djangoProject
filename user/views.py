@@ -1,7 +1,6 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from user.forms import UserForm
-
 
 def signup(request):
     if request.method == "POST":
@@ -21,3 +20,14 @@ def signup(request):
 def profile(request):
     form = UserForm()
     return render(request, 'user/profile.html',{'form': form})
+
+def delete(request):
+    if request.user.is_authenticated:
+        request.user.delete()
+    logout(request)
+    return redirect('/')
+
+def modify(request):
+    user = request.user
+    context = {'user': user}
+    return render(request, 'user/modify.html', {'context': context})
