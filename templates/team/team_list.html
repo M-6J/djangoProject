@@ -13,16 +13,17 @@
         </tr>
         </thead>
         <tbody>
+        {% for team in team_list %}
         <tr>
+            <td><a href="{% url 'team:detail' team.id %}">{{ forloop.counter }}</a></td>
             <td>{{ team.team_name }}</td>
             <td>{{ team.description }}</td>
             <td>{{ team.managers }}</td>
             <td>{{ team.members }}</td>
             <td>{{ team.task }}</td>
         </tr>
+        {% endfor %}
         </tbody>
     </table>
-    <a href="{% url 'team:modify' team.id %}">팀 수정</a>
-    <a href="{% url 'team:delete' team.id %}">팀 삭제</a>
 </div>
 {% endblock %}

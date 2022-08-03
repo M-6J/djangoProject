@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h5 class="my-3 border-bottom pb-2">修改团队</h5>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="team_name" class="form-label">team_name</label>
+            <input type="text" class="form-control" name="team_name" id="team_name"
+                   value="{{ team.team_name}}">
+        </div>
+         <div class="mb-3">
+            <label for="managers" class="form-label">managers</label>
+            <input type="text" class="form-control" name="managers" id="managers"
+                   value="{{ team.managers}}">
+        </div>
+         <div class="mb-3">
+            <label for="members" class="form-label">members</label>
+            <input type="text" class="form-control" name="members" id="members"
+                   value="{{ team.members}}">
+        </div>
+        <div class="mb-3">
+            <label for="task" class="form-label">task</label>
+            <input type="text" class="form-control" name="task" id="task"
+                   value="{{ team.task}}">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">description</label>
+            <textarea class="form-control" name="description"
+                      id="description" rows="10">{{ team.description }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">修改</button>
+    </form>
+</div>
+{% endblock %}
