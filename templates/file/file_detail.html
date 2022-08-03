@@ -4,29 +4,20 @@
     <table class="table">
         <thead>
         <tr class="table-dark">
-            <th>编号</th>
             <th>文档题目</th>
             <th>文档名</th>
             <th>创建时间</th>
         </tr>
         </thead>
         <tbody>
-        {% if file_list %}
-        {% for file in file_list %}
         <tr>
-            <td><a href="{% url 'file:filedetail' file.id %}">{{ forloop.counter }}</a></td>
             <td>{{ file.title }}</td>
             <td>{{ file.file }}</td>
             <td>{{ file.startdate }}</td>
         </tr>
-        {% endfor %}
-        {% else %}
-        <tr>
-            <td colspan="3">没有项目</td>
-        </tr>
-        {% endif %}
         </tbody>
     </table>
-    <a href="{% url 'file:fileupload' %}" class="btn btn-primary">创建文档</a>
+    <a href="">删除文档</a>
+    <a href="">修改文档</a>
 </div>
 {% endblock %}

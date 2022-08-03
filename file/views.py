@@ -8,6 +8,11 @@ def fileList(request):
     context = {'file_list': file_list}
     return render(request,'file/file_list.html',context)
 
+def fileDetail(request,file_id):
+    file = FileUpload.objects.get(id=file_id)
+    context = {'file': file}
+    return render(request,'file/file_detail.html',context)
+
 def fileUpload(request):
     if request.method == 'POST':
         title = request.POST['title']
