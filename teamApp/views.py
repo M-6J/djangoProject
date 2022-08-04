@@ -1,18 +1,16 @@
 from django.contrib.auth.models import User
 from django.core import serializers
-from django.http import HttpResponseRedirect, HttpResponseForbidden, JsonResponse, HttpResponse
-from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.http import HttpResponseForbidden, JsonResponse, HttpResponse
 
+from profileApp.models import Notice
 from taskApp.models import Task
-from teamApp.forms import TeamCreationForm
 from teamApp.models import Team, Member
 import json
 
 
 # ============================================= Managing Team Here From, ===============================================
 # ===========================================  create, update, del, detail =============================================
-def team_managing(request):  # 팀 생성 이전 사이트- 자기 친구 정보 알고 있어야 함.
+def team_managing(request):
     username = request.POST.get('username')
     user = User.objects.get(username__exact=username)
     friends = User.objects.filter(profile__friend__exact=user)
@@ -21,7 +19,6 @@ def team_managing(request):  # 팀 생성 이전 사이트- 자기 친구 정보
     return HttpResponse(content=data)
 
 
-# csrf here
 def team_create(request):
     username = request.POST.get('username')  # to be creator
     self = User.objects.get(username__exact=username)
@@ -31,7 +28,9 @@ def team_create(request):
     team_name = request.POST.get('team_name')
     description = request.POST.get('description')
 
-    new_team = Team.objects.create(name=team_name, description=description)
+    choice = request.POST.get('region')
+
+    new_team = Team.objects.create(name=team_name, description=description, region=choice)
     new_team.member.add(creator)
 
     member = request.POST.getlist('member', None)
@@ -50,12 +49,49 @@ def team_create(request):
     })
 
 
+def team_detail(request, pk):
+    team = Team.objects.get(pk=pk)
+
+    detail = serializers.serialize('json', [team], fields=(
+        'name', 'description', 'region'
+    ))
+
+    members = User.objects.filter(member__team__exact=team)
+    member_list = serializers.serialize('json', members, fields=(
+        'username'
+    ))
+
+    tasks = Task.objects.filter(team__exact=team)
+    task_list = serializers.serialize('json', tasks, fields=(
+        'name', 'description', 'worker', 'start', 'ddl'
+    ))
+
+    data = {
+        detail,
+        member_list,
+        task_list
+    }
+
+    return HttpResponse(content=data)
+
+
 # ============================================ Managing Members Here From, =============================================
 # =========================================  add, del(quit), promote, degrade ==========================================
 # add decorators here, 'creator and manager only' for post, get
 def add_member(request):  # add member by input: email
-    team = Team.objects.get(pk=request.GET.get('team_pk'))
-    target = User.objects.get(email__exact=request.GET.get('target_user'))
+    team = Team.objects.get(pk=request.POST.get('team_pk'))
+    sender = User.objects.get(username__exact=request.POST.get('sender'))
+
+    rel_choice = request.POST.get('rel_choice')
+
+    if rel_choice == 'username':
+        receiver = User.objects.get(username__exact=rel_choice)
+    elif rel_choice == 'email':
+        receiver = User.objects.get(email__exact=rel_choice)
+
+    Notice.objects.create()
+
+    target = User.objects.get(email__exact=request.POST.get('target_user'))
 
     if team.member.contains(target):
         pass  # already invited! and just redirect to member managing url

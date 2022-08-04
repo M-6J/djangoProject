@@ -14,5 +14,6 @@ class Profile(models.Model):
 
 
 class Notice(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='notice')
+    receiver = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='notice')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notice')
     content = models.TextField(null=False)
