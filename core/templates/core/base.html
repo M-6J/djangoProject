@@ -59,15 +59,6 @@
       <!--</li>-->
     </ul>
     <ul class="nav navbar-nav ml-auto">
-      <li class="nav-item d-md-down-none">
-        <a class="nav-link" href="#"><i class="fa fa-bell"></i><span class="badge badge-pill badge-danger">{{ logged_user.received_invites.count }}</span></a>
-      </li>
-      <li class="nav-item d-md-down-none">
-        <a class="nav-link" href="#"><i class="fa fa-list"></i></a>
-      </li>
-      <li class="nav-item d-md-down-none">
-        <a class="nav-link" href="#"><i class="fa fa-map-marker"></i></a>
-      </li>
       {% if user.is_authenticated %}
       <li class="text-muted">Hello, {{ user.first_name }}</li>
       {% else %}
@@ -211,9 +202,7 @@
         <!-- Breadcrumb Menu-->
         <li class="breadcrumb-menu d-md-down-none">
           <div class="btn-group" role="group" aria-label="Button group">
-            <a class="btn" href="#"><i class="fa fa-comments"></i></a>
             <a class="btn" href="./"><i class="fa fa-tachometer-alt"></i> &nbsp;Dashboard</a>
-            <a class="btn" href="#"><i class="fa fa-cog"></i> &nbsp;Settings</a>
           </div>
         </li>
       </ol>
@@ -393,10 +382,6 @@
 
   </div>
 
-  <footer class="app-footer">
-    <span><a href="http://coreui.io">Copyright</a> © 2021 Project Management System.</span>
-    <!--<span class="ml-auto">Powered by <a href="http://coreui.io">CoreUI</a></span>-->
-  </footer>
 
   <!-- Bootstrap and necessary plugins -->
     <script src="{% static 'core/vendors/js/jquery.min.js'%}"></script>
