@@ -83,8 +83,13 @@ def invite_member(request):  # add member by input: email
     team = Team.objects.get(pk=request.POST.get('team_pk'))
     sender = User.objects.get(username__exact=request.POST.get('sender'))
 
-    if Member.objects.filter(team__exact=team).filter(user__exact=sender).exists():
-        pass
+    a = Member.objects.filter(team__exact=team).filter(user__exact=sender)
+
+    if a.exists():
+        if a.model.role > 0:
+            pass
+        else:
+            return JsonResponse({'msg': 'err 1001'})
     else:
         return JsonResponse({'msg': 'err 100'})
 
