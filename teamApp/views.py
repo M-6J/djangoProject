@@ -79,10 +79,14 @@ def team_detail(request, pk):
 
 # ============================================ Managing Members Here From, =============================================
 # =========================================  add, del(quit), promote, degrade ==========================================
-# add decorators here, 'creator and manager only' for post, get
 def invite_member(request):  # add member by input: email
     team = Team.objects.get(pk=request.POST.get('team_pk'))
     sender = User.objects.get(username__exact=request.POST.get('sender'))
+
+    if Member.objects.filter(team__exact=team).filter(user__exact=sender).exists():
+        pass
+    else:
+        return JsonResponse({'msg': 'err 100'})
 
     rel_choice = request.POST.get('rel_choice')
     rel = request.POST.get('rel')
@@ -95,7 +99,7 @@ def invite_member(request):  # add member by input: email
         return JsonResponse({'msg': 'err 101'})
 
     if team.member.contains(receiver):
-        return JsonResponse({'msg': 'err 100'})
+        return JsonResponse({'msg': 'err 102'})
     else:
         content = team.name
         target = team.pk
