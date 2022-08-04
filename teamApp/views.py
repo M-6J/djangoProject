@@ -79,19 +79,27 @@ def team_detail(request, pk):
 
 # ============================================ Managing Members Here From, =============================================
 # =========================================  add, del(quit), promote, degrade ==========================================
+def verify(team, oper, targ, typ):
+    temp = Member.objects.filter(team__exact=team).filter(user__exact=oper)
+    tar = Member.objects.filter(team__exact=team).filter(user__exact=targ)
+
+    if typ == 1:  # invite
+        if temp.exists() | temp.model.role > 0:
+            pass
+    elif typ == 2:  # delete
+        if not tar.exists():
+            return JsonResponse({'msg': 'err 103'})  # already deleted
+        elif temp.exists() | temp.model.role > tar.model.role:
+            return tar
+    else:
+        return JsonResponse({'msg': 'err 100'})  # authority error
+
+
 def invite_member(request):  # add member by input: email
     team = Team.objects.get(pk=request.POST.get('team_pk'))
     sender = User.objects.get(username__exact=request.POST.get('sender'))
 
-    a = Member.objects.filter(team__exact=team).filter(user__exact=sender)
-
-    if a.exists():
-        if a.model.role > 0:
-            pass
-        else:
-            return JsonResponse({'msg': 'err 1001'})
-    else:
-        return JsonResponse({'msg': 'err 100'})
+    verify(team, sender, None, 1)
 
     rel_choice = request.POST.get('rel_choice')
     rel = request.POST.get('rel')
@@ -101,10 +109,10 @@ def invite_member(request):  # add member by input: email
     elif rel_choice == 'email':
         receiver = User.objects.get(email__exact=rel)
     else:
-        return JsonResponse({'msg': 'err 101'})
+        return JsonResponse({'msg': 'err 101'})  # method error
 
     if team.member.contains(receiver):
-        return JsonResponse({'msg': 'err 102'})
+        return JsonResponse({'msg': 'err 102'})  # already member
     else:
         content = team.name
         target = team.pk
@@ -119,12 +127,16 @@ def invite_member(request):  # add member by input: email
 
 # add decorators here, 'creator, manager and self only' for post, get
 def del_member(request):  # quit or del member, quit: self, del: manager or creator
-    team = Team.objects.get(pk=request.GET.get('team_pk'))
-    target = User.objects.get(email__exact=request.GET('target_user'))
+    team = Team.objects.get(pk=request.POST.get('team_pk'))
+    oper = User.objects.get(username__exact=request.POST.get('oper'))
+    target = User.objects.get(username__exact=request.POST.get('target'))
 
-    if team.member.contains(target):
-        pass  # del target from member pool
-    pass
+    tar = verify(team, oper, target, 2)
+
+    team.member.remove(tar)
+    team.save()
+
+    return JsonResponse({'msg': 'success'})
 
 
 # add decorators here, 'creator only' for post, get
