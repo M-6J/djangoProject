@@ -42,7 +42,7 @@
     <button class="navbar-toggler mobile-sidebar-toggler d-lg-none mr-auto" type="button">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <img src="{% static 'core/img/logos/title.jpg' %}" alt="" class="brand-gui ml-2 d-none d-sm-block p-2">
+    <img src="{% static 'core/img/logos/beihang.jpg' %}" alt="" class="brand-gui ml-2 d-none d-sm-block p-2">
     <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -162,9 +162,13 @@
           <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-user"></i> Users</a>
             <ul class="nav-dropdown-items">
+                {% if user.is_authenticated %}
+                {% else %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'register:new-user' %}"><i class="fa fa-user-plus ml-2"></i> Create New User</a>
               </li>
+                {%  endif %}
+
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'register:friends' %}"><i class="fa fa-users ml-2"></i> Friends</a>
               </li>
@@ -176,13 +180,19 @@
           </li>
           <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-star"></i> Pages</a>
+
+
             <ul class="nav-dropdown-items">
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'core:login' %}" target="_top"><i class="fa fa-sign-in"></i> Login</a>
-              </li>
+
+                {% if user.is_authenticated %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'core:logout' %}" target="_top"><i class="fa fa-sign-out"></i> Logout</a>
               </li>
+                 {% else %}
+                    <li class="nav-item">
+                <a class="nav-link" href="{% url 'core:login' %}" target="_top"><i class="fa fa-sign-in"></i> Login</a>
+              </li>
+                {%  endif %}
             </ul>
           </li>
         </ul>
@@ -217,9 +227,6 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" data-toggle="tab" href="#messages" role="tab"><i class="fa fa-comments"></i></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" href="#settings" role="tab"><i class="fa fa-cog"></i></a>
         </li>
       </ul>
 
@@ -382,6 +389,10 @@
 
   </div>
 
+  <footer class="app-footer">
+    <span><a href="https://github.com/M-6J/djangoProject">Github</a>  # 2022 BUAA Project Management System.</span>
+    <!--<span class="ml-auto">Powered by <a href="http://coreui.io">CoreUI</a></span>-->
+  </footer>
 
   <!-- Bootstrap and necessary plugins -->
     <script src="{% static 'core/vendors/js/jquery.min.js'%}"></script>

@@ -19,7 +19,8 @@ def register(request):
             created = True
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             context = {'created' : created}
-            return render(request, 'register/reg_form.html', context)
+            #return render(request, 'register/reg_form.html', context)
+            return redirect('/')
         else:
             return render(request, 'register/reg_form.html', context)
     else:
