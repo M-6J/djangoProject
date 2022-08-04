@@ -1,1 +1,1 @@
-# It leads to version 3 branch
+# The mjtest branch leads to version 3 branch
