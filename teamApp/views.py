@@ -1,3 +1,5 @@
+import string
+
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.http import HttpResponseForbidden, JsonResponse, HttpResponse
@@ -5,7 +7,7 @@ from django.http import HttpResponseForbidden, JsonResponse, HttpResponse
 from profileApp.models import Notice
 from taskApp.models import Task
 from teamApp.models import Team, Member
-import json
+import random
 
 
 # ============================================= Managing Team Here From, ===============================================
@@ -45,7 +47,7 @@ def team_create(request):
     new_team.save()
 
     return JsonResponse({
-        "success": "success"
+        "msg": "success"
     })
 
 
@@ -78,27 +80,32 @@ def team_detail(request, pk):
 # ============================================ Managing Members Here From, =============================================
 # =========================================  add, del(quit), promote, degrade ==========================================
 # add decorators here, 'creator and manager only' for post, get
-def add_member(request):  # add member by input: email
+def invite_member(request):  # add member by input: email
     team = Team.objects.get(pk=request.POST.get('team_pk'))
     sender = User.objects.get(username__exact=request.POST.get('sender'))
 
     rel_choice = request.POST.get('rel_choice')
+    rel = request.POST.get('rel')
 
     if rel_choice == 'username':
-        receiver = User.objects.get(username__exact=rel_choice)
+        receiver = User.objects.get(username__exact=rel)
     elif rel_choice == 'email':
-        receiver = User.objects.get(email__exact=rel_choice)
-
-    Notice.objects.create()
-
-    target = User.objects.get(email__exact=request.POST.get('target_user'))
-
-    if team.member.contains(target):
-        pass  # already invited! and just redirect to member managing url
+        receiver = User.objects.get(email__exact=rel)
     else:
-        pass  # send complete!
-    # send notice to user, you are invited to team -> this link: add user to member, and member redirect to team detail.
-    pass
+        return JsonResponse({'msg': 'err 101'})
+
+    if team.member.contains(receiver):
+        return JsonResponse({'msg': 'err 100'})
+    else:
+        content = team.name
+        target = team.pk
+
+        verif = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(30))
+
+        notice = Notice.objects.create(sender=sender, receiver=receiver, content=content, team_pk=target, verif=verif)
+        notice.save()
+
+        return JsonResponse({'msg': 'success'})
 
 
 # add decorators here, 'creator, manager and self only' for post, get
@@ -114,7 +121,7 @@ def del_member(request):  # quit or del member, quit: self, del: manager or crea
 # add decorators here, 'creator only' for post, get
 def promote(request):
     team = Team.objects.get(pk=request.GET.get('team_pk'))
-    if team == request.user.own_team:
+    if team.member.contains('value'):  # is contained for value
         target = User.objects.get(pk=request.GET('user_pk'))
         team.manager.add(target)
         team.save()
