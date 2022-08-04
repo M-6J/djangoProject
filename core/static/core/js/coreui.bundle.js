@@ -1,4 +1,4 @@
-/*!
+ /*!
   * CoreUI v2.0.0-beta.0 (https://coreui.io)
   * Copyright 2018 Łukasz Holeczek
   * Licensed under MIT (https://coreui.io)
