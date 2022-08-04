@@ -22,10 +22,12 @@ def fileModify(request,file_id):
         if request.method == 'POST':
             title = request.POST['title']
             file = request.FILES["file"]
+            content = request.POST['content']
             startdate = timezone.now()
             fileupload = FileUpload(
                 title=title,
                 file=file,
+                content=content,
                 startdate=startdate,
             )
             fileupload.save()
@@ -40,6 +42,7 @@ def fileUpload(request):
     if request.method == 'POST':
         title = request.POST['title']
         file = request.FILES["file"]
+        content = request.POST['content']
         writer = request.user
         startdate = timezone.now()
         fileupload = FileUpload(
@@ -47,6 +50,7 @@ def fileUpload(request):
             file=file,
             writer = writer,
             startdate = startdate,
+            content= content,
         )
         fileupload.save()
         return redirect('/file/filelist/')

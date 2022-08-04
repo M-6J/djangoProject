@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script>
 <div class="container">
     <form method="POST" action="{% url 'file:fileupload' %}" enctype="multipart/form-data">
         {% csrf_token %}
@@ -8,6 +9,22 @@
         </div>
         <div>
             文档 ： <input type="file" name="file">
+        </div>
+        <div>
+            <td>
+                <div class="form-group">
+                    <textarea name="content" id="editor" class="form-control" readonly>{{ file.content }}</textarea>
+                    <script>
+                        ClassicEditor
+                            .create(document.querySelector( '#editor'), {
+                                language: { ui : 'en', content : 'en'}
+                            })
+                            .catch(error => {
+                                console.error(error);
+                            })
+                    </script>
+                </div>
+            </td>
         </div>
         <input type="submit" class="btn btn-primary col-12" value="上传">
     </form>

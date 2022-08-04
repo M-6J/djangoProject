@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
+<script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script>
 <div class="container my-3">
     <table class="table">
         <thead>
         <tr class="table-dark">
             <th>文档题目</th>
             <th>文档名</th>
+            <th>内容</th>
             <th>创建时间</th>
         </tr>
         </thead>
@@ -13,6 +15,20 @@
         <tr>
             <td>{{ file.title }}</td>
             <td>{{ file.file }}</td>
+            <td>
+                <div class="form-group">
+                    <textarea name="content" id="editor" class="form-control" readonly>{{ file.content }}</textarea>
+                    <script>
+                        ClassicEditor
+                            .create(document.querySelector( '#editor'), {
+                                language: { ui : 'en', content : 'en'}
+                            })
+                            .catch(error => {
+                                console.error(error);
+                            })
+                    </script>
+                </div>
+            </td>
             <td>{{ file.startdate }}</td>
         </tr>
         </tbody>
