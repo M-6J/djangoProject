@@ -1,4 +1,4 @@
-$(function(){
+ $(function(){
   'use strict';
 
   //convert Hex to RGBA
