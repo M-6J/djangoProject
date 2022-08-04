@@ -10,8 +10,9 @@ class Profile(models.Model):
     identity = models.CharField(max_length=30)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile')
+    friend = models.ManyToManyField(User, blank=True, related_name='user')
 
 
 class Notice(models.Model):
-    profile = models.ManyToManyField(Profile, null=False, related_name='notice')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='notice')
     content = models.TextField(null=False)

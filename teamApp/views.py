@@ -1,76 +1,61 @@
 from django.contrib.auth.models import User
 from django.core import serializers
-from django.http import HttpResponseRedirect, HttpResponseForbidden, JsonResponse
+from django.http import HttpResponseRedirect, HttpResponseForbidden, JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
 
 from taskApp.models import Task
 from teamApp.forms import TeamCreationForm
-from teamApp.models import Team
+from teamApp.models import Team, Member
+import json
 
 
 # ============================================= Managing Team Here From, ===============================================
 # ===========================================  create, update, del, detail =============================================
-# add decorators here, 'must be login-ed' for post, get
-class TeamCreateView(CreateView):  # User can make a Team
-    model = Team
-    form_class = TeamCreationForm
-    template_name = 'index.html'
+def team_managing(request):  # 팀 생성 이전 사이트- 자기 친구 정보 알고 있어야 함.
+    username = request.POST.get('username')
+    user = User.objects.get(username__exact=username)
+    friends = User.objects.filter(profile__friend__exact=user)
+    data = serializers.serialize('json', friends, fields='username')
 
-    def form_valid(self, form):
-        obj = form.save(commit=False)
-        user = self.request.user
-        obj.member.user = user
-        obj.member.role = 2  # Creator -> creator&member
-        obj.save()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return  # reverse to team detail
+    return HttpResponse(content=data)
 
 
-# add decorators here, 'creator only' for post, get
-class TeamUpdateView(UpdateView):  # Creator can change team's name and description
-    model = Team
-    context_object_name = 'target_team'
-    form_class = TeamCreationForm
-    template_name = 'index.html'
+# csrf here
+def team_create(request):
+    username = request.POST.get('username')  # to be creator
+    self = User.objects.get(username__exact=username)
 
-    def get_success_url(self):
-        return  # reverse to team detail
+    creator = Member.objects.create(user=self, role=2)
 
+    team_name = request.POST.get('team_name')
+    description = request.POST.get('description')
 
-# add decorators here, 'creator only' for post, get
-def del_team(request):  # Creator can del team
-    pass
+    new_team = Team.objects.create(name=team_name, description=description)
+    new_team.member.add(creator)
 
+    member = request.POST.getlist('member', None)
 
-# add decorators here, 'member only' for post, get
-class TeamDetailView(DetailView):
-    model = Team
-    context_object_name = 'target_team'
+    for i in member:
+        user = User.objects.get(username__exact=i)
+        j = Member.objects.create(user=user, role=0)
+        j.save()
 
-    # get this_team.pk
-    def get_context_data(self, **kwargs):
-        team = self.object
+        new_team.member.add(j)
 
-        # query members below, and keep in context
-        object_list = User.objects.filter(member__team__exact=team)
-        context = super(TeamDetailView, self).get_context_data(object_list=object_list, **kwargs)
+    new_team.save()
 
-        # query tasks below, keep in context, and return context
-        tasks = Task.objects.filter(team__exact=team)
-        context['tasks'] = tasks
-        data = serializers.serialize('json', context)
-        return JsonResponse(data)
+    return JsonResponse({
+        "success": "success"
+    })
 
 
 # ============================================ Managing Members Here From, =============================================
 # =========================================  add, del(quit), promote, degrade ==========================================
 # add decorators here, 'creator and manager only' for post, get
 def add_member(request):  # add member by input: email
-    team = Team.objects.get(pk=request.GET('team_pk'))
-    target = User.objects.get(email__exact=request.GET('target_user'))
+    team = Team.objects.get(pk=request.GET.get('team_pk'))
+    target = User.objects.get(email__exact=request.GET.get('target_user'))
 
     if team.member.contains(target):
         pass  # already invited! and just redirect to member managing url
@@ -82,7 +67,7 @@ def add_member(request):  # add member by input: email
 
 # add decorators here, 'creator, manager and self only' for post, get
 def del_member(request):  # quit or del member, quit: self, del: manager or creator
-    team = Team.objects.get(pk=request.GET('team_pk'))
+    team = Team.objects.get(pk=request.GET.get('team_pk'))
     target = User.objects.get(email__exact=request.GET('target_user'))
 
     if team.member.contains(target):
@@ -92,7 +77,7 @@ def del_member(request):  # quit or del member, quit: self, del: manager or crea
 
 # add decorators here, 'creator only' for post, get
 def promote(request):
-    team = Team.objects.get(pk=request.GET('team_pk'))
+    team = Team.objects.get(pk=request.GET.get('team_pk'))
     if team == request.user.own_team:
         target = User.objects.get(pk=request.GET('user_pk'))
         team.manager.add(target)

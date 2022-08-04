@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 
 from teamApp.models import Team
@@ -9,7 +9,7 @@ class Task(models.Model):
     description = models.TextField(max_length=200)
 
     # relationship below
-    worker = models.ForeignKey(User, on_delete=models.SET_DEFAULT, null=True, default=None)
+    worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_DEFAULT, null=True, default=None)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
     start = models.DateTimeField(null=True, default=None)
