@@ -32,3 +32,13 @@
 - accept ： 接受邀请， 用户可以选择是否被邀请
 - signup ： 用户注册，（email，username，passowrd）
 - login ： 用户登录 ，（username，password）
+
+#### TeamAPP
+- team_managing ：
+- team_create :
+- team_detail :
+- verify :
+- invite_member :
+- del_member :
+- promote :
+- degrade :
