@@ -21,4 +21,5 @@
 - Profile : 用户 model
 - Notice ： 邀请技能
 - Task : 任务，用户可以做Task
-- 
+- Team :
+- Member : 团队里 有3种人， member，manager，creater（super manager）
