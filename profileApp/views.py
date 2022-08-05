@@ -8,6 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 from profileApp.models import Notice, Profile
 from teamApp.models import Team, Member
 
+import json
+
 
 def method_auth(request, method):
     if request.method == method:
@@ -82,19 +84,20 @@ def accept(request, verif):  # accept invite with verif code: verif code generat
 def signup(request):
     """ -> signup
     POST, /profile/signup
-    :param request: username(str), password1(str), password2(str), email(str)
+    :param request: 'username(str)', 'password1(str)', 'password2(str)', 'email(str)'
     :return: Json   [
                         {'msg': 'success'} or {'errcode'}
                     ]
     """
     if request.method == 'POST':
-        if request.POST.get('password1') == request.POST.get('password2'):
-            if User.objects.filter(username__exact=request.POST.get('username')).exists():
+        data = json.loads(request.body)
+        if data.get('password1') == data.get('password2'):
+            if User.objects.filter(username__exact=data.get('username')).exists():
                 return JsonResponse({'msg': 'err 201'})  # username duplicates
             user = User.objects.create_user(
-                username=request.POST.get('username'),
-                password=request.POST.get('password1'),
-                email=request.POST.get('email')
+                username=data.get('username'),
+                password=data.get('password1'),
+                email=data.get('email')
             )
             auth.login(request, user)
             return JsonResponse({'msg': 'success'})
@@ -112,8 +115,9 @@ def login(request):
                     ]
     """
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth.login(request, user)

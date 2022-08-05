@@ -9,7 +9,7 @@ from profileApp.models import Notice
 from projectApp.models import Project
 from taskApp.models import Task
 from teamApp.models import Team, Member
-import random
+import random, json
 
 
 def method_auth(request, method):
@@ -42,7 +42,9 @@ def team_managing(request):
 
     method_auth(request, 'GET')
 
-    username = request.GET.get('username')
+    data = json.loads(request.body)
+
+    username = data.get('username')
     user = User.objects.get(username__exact=username)
     friends = User.objects.filter(profile__friend__exact=user)
     data = serializers.serialize('json', friends, fields='username')
@@ -63,20 +65,22 @@ def team_create(request):
 
     method_auth(request, 'POST')
 
-    username = request.POST.get('username')  # to be creator
+    data = json.loads(request.body)
+
+    username = data.get('username')  # to be creator
     self = User.objects.get(username__exact=username)
 
     creator = Member.objects.create(user=self, role=2)
 
-    team_name = request.POST.get('team_name')
-    description = request.POST.get('description')
+    team_name = data.get('team_name')
+    description = data.get('description')
 
-    choice = request.POST.get('region')
+    choice = data.get('region')
 
     new_team = Team.objects.create(name=team_name, description=description, region=choice)
     new_team.member.add(creator)
 
-    member = request.POST.getlist('member', None)
+    member = data.getlist('username', None)
 
     for i in member:
         user = User.objects.get(username__exact=i)
@@ -167,7 +171,6 @@ def team_detail(request, pk):
 
 # ============================================ Managing Members Here From, =============================================
 # =========================================  add, del(quit), promote, degrade ==========================================
-@csrf_exempt
 def verify(team, oper, targ, typ):
     temp = Member.objects.filter(team__exact=team).filter(user__exact=oper)
     tar = Member.objects.filter(team__exact=team).filter(user__exact=targ)
@@ -196,13 +199,15 @@ def invite_member(request):  # add member by input: email
 
     method_auth(request, 'POST')
 
-    team = Team.objects.get(pk=request.POST.get('team_pk'))
-    sender = User.objects.get(username__exact=request.POST.get('sender'))
+    data = json.loads(request.body)
+
+    team = Team.objects.get(pk=data.get('team_pk'))
+    sender = User.objects.get(username__exact=data.get('sender'))
 
     verify(team, sender, None, 1)
 
-    rel_choice = request.POST.get('rel_choice')
-    rel = request.POST.get('rel')
+    rel_choice = data.get('rel_choice')
+    rel = data.get('rel')
 
     if rel_choice == 'username':
         receiver = User.objects.get(username__exact=rel)
@@ -237,9 +242,11 @@ def del_member(request):  # quit or del member, quit: self, del: manager or crea
 
     method_auth(request, 'POST')
 
-    team = Team.objects.get(pk=request.POST.get('team_pk'))
-    oper = User.objects.get(username__exact=request.POST.get('oper'))
-    target = User.objects.get(username__exact=request.POST.get('target'))
+    data = json.loads(request.body)
+
+    team = Team.objects.get(pk=data.get('team_pk'))
+    oper = User.objects.get(username__exact=data.get('oper'))
+    target = User.objects.get(username__exact=data.get('target'))
 
     tar = verify(team, oper, target, 2)
 
@@ -261,9 +268,11 @@ def promote(request):
 
     method_auth(request, 'POST')
 
-    team = Team.objects.get(pk=request.POST.get('team_pk'))
-    oper = User.objects.get(username__exact=request.POST.get('oper'))
-    target = User.objects.get(username__exact=request.POST.get('target'))
+    data = json.loads(request.body)
+
+    team = Team.objects.get(pk=data.get('team_pk'))
+    oper = User.objects.get(username__exact=data.get('oper'))
+    target = User.objects.get(username__exact=data.get('target'))
 
     tar = verify(team, oper, target, 2)
 
@@ -288,9 +297,11 @@ def degrade(request):
 
     method_auth(request, 'POST')
 
-    team = Team.objects.get(pk=request.POST.get('team_pk'))
-    oper = User.objects.get(username__exact=request.POST.get('oper'))
-    target = User.objects.get(username__exact=request.POST.get('target'))
+    data = json.loads(request.body)
+
+    team = Team.objects.get(pk=data.get('team_pk'))
+    oper = User.objects.get(username__exact=data.get('oper'))
+    target = User.objects.get(username__exact=data.get('target'))
 
     tar = verify(team, oper, target, 2)
 
