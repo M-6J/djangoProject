@@ -1,5 +1,7 @@
 # djangoProject
 ## Project Version2
+- Django BackEnd ProtoType2
+
 ### use venv virtual environment
 - python -m venv venv
 - venv/scripts/activate
