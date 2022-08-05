@@ -1,4 +1,6 @@
 ## Project version3
+- Django Backend Final Version
+
 Python 3.10.2
 
 python -m pip install --upgrade pip
