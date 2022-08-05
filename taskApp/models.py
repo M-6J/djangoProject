@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.db import models
 
 from teamApp.models import Team
@@ -9,8 +10,10 @@ class Task(models.Model):
     description = models.TextField(max_length=200)
 
     # relationship below
-    worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_DEFAULT, null=True, default=None)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    worker = models.ForeignKey(User, on_delete=models.SET_DEFAULT, null=True, default=None)
+    workerName = models.CharField(max_length=50)
+
+    # team = models.ForeignKey(Team, on_delete=models.CASCADE) --> project
 
     start = models.DateTimeField(null=True, default=None)
     ddl = models.DateTimeField(null=True, default=None)

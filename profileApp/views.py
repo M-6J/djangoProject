@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from profileApp.models import Notice, Profile
 from teamApp.models import Team, Member
@@ -77,6 +78,7 @@ def accept(request, verif):  # accept invite with verif code: verif code generat
 
 # ===================================================== Auth here ======================================================
 # ============================================== signup, login and update ==============================================
+@csrf_exempt
 def signup(request):
     """ -> signup
     POST, /profile/signup
@@ -100,6 +102,7 @@ def signup(request):
         return JsonResponse({'msg': 'err 200'})  # method err
 
 
+@csrf_exempt
 def login(request):
     """ -> login
     POST, /profile/login
@@ -123,14 +126,14 @@ def login(request):
 
 # ============================================= Profile Pages Here From, ===============================================
 # =================================================  detail and edit ===================================================
-
-
+@csrf_exempt
 def detail(request, pk):
     method_auth(request, 'GET')
 
     pass
 
 
+@csrf_exempt
 def edit(request):
     method_auth(request, 'POST')
 

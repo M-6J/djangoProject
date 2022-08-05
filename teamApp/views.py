@@ -3,6 +3,7 @@ import string
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.http import HttpResponseForbidden, JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from profileApp.models import Notice
 from taskApp.models import Task
@@ -19,6 +20,7 @@ def method_auth(request, method):
 
 # ============================================= Managing Team Here From, ===============================================
 # ===========================================  create, update, del, detail =============================================
+@csrf_exempt
 def team_managing(request):
     """ -> team manage page
     GET, /team/manage
@@ -47,6 +49,7 @@ def team_managing(request):
     return HttpResponse(content=data)
 
 
+@csrf_exempt
 def team_create(request):
     """ -> create team in team manage page (modal pop-up)
     POST, /team/create
@@ -88,6 +91,7 @@ def team_create(request):
     })
 
 
+@csrf_exempt
 def team_detail(request, pk):
     """ -> detail page for team
     GET, /team/detail/<int:pk>
@@ -108,7 +112,7 @@ def team_detail(request, pk):
                         }
                     [
                         {
-                            "model": "auth.User",
+                            "model": "auth.user",
                             "pk": (int),
                             "fields": {
                                 "username": (str)
@@ -120,15 +124,11 @@ def team_detail(request, pk):
                     ]
                     [
                         {
-                            "model": "taskApp.task",
+                            "model": "projectApp.project",
                             "pk": (int),
                             "fields": {
                                 "name": (str),
-                                "description": (str),
-                                "worker": (str),
-                                "start": (datetime)
-                                "ddl": (datetime)
-                                "status": (int)
+                                "description": (str)
                                 }
                         },
                         {
@@ -166,6 +166,7 @@ def team_detail(request, pk):
 
 # ============================================ Managing Members Here From, =============================================
 # =========================================  add, del(quit), promote, degrade ==========================================
+@csrf_exempt
 def verify(team, oper, targ, typ):
     temp = Member.objects.filter(team__exact=team).filter(user__exact=oper)
     tar = Member.objects.filter(team__exact=team).filter(user__exact=targ)
@@ -182,6 +183,7 @@ def verify(team, oper, targ, typ):
         return JsonResponse({'msg': 'err 100'})  # authority error
 
 
+@csrf_exempt
 def invite_member(request):  # add member by input: email
     """ -> invite member
     POST, /team/invite
@@ -222,6 +224,7 @@ def invite_member(request):  # add member by input: email
         return JsonResponse({'msg': 'success'})
 
 
+@csrf_exempt
 def del_member(request):  # quit or del member, quit: self, del: manager or creator
     """ -> delete member
     POST, /team/del
@@ -245,6 +248,7 @@ def del_member(request):  # quit or del member, quit: self, del: manager or crea
     return JsonResponse({'msg': 'success'})
 
 
+@csrf_exempt
 def promote(request):
     """ -> promote member (member -> manager)
     POST, /team/pro
@@ -271,6 +275,7 @@ def promote(request):
     return JsonResponse({'msg': 'success'})
 
 
+@csrf_exempt
 def degrade(request):
     """ -> degrade member (manager -> member)
     POST, team/deg
