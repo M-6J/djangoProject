@@ -1,3 +1,4 @@
+from django.core import serializers
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -41,12 +42,32 @@ def create(request):
 
 
 @csrf_exempt
-def detail(request):
+def detail(request, pk):
+    """
+    GET, /project/detail/<int:pk>/ -> pk = pk for project
+    :param request:
+    :param pk:
+    :return:
+    """
     method_auth(request, 'GET')
+
+    project = Project.objects.get(pk=pk)
+
+    data = serializers.serialize('Json', project, fields=(  # return fields of this project
+
+    ))
+
     pass
 
 
 @csrf_exempt
 def update(request):
     method_auth(request, 'POST')
+
+    data = json.loads(request.body)
+
+    project = Project.objects.get(name__exact=data.get('name'))
+
+
+
     pass

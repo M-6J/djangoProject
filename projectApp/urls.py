@@ -7,6 +7,6 @@ app_name = 'projectApp'
 urlpatterns = [
     path('manage/', manage, name='manage'),
     path('create/', create, name='create'),
-    path('detail/', detail, name='detail'),
+    path('detail/<int:pk>', detail, name='detail'),
     path('update/', update, name='update'),
 ]
