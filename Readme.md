@@ -17,3 +17,8 @@
 - python manage.py createsuperuser : make admin account
 - python manage.py runserver
 
+### model介绍
+- Profile : 用户 model
+- Notice ： 邀请技能
+- Task : 任务，用户可以做Task
+- 
