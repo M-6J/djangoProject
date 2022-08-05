@@ -15,4 +15,13 @@ class Task(models.Model):
     start = models.DateTimeField(null=True, default=None)
     ddl = models.DateTimeField(null=True, default=None)
 
-    status = models.CharField
+    STATUS_CHOICES = (
+        (0, 'ready for worker'),
+        (1, 'worker exists'),
+        (2, 'on work'),
+        (3, 'err found'),
+        (4, 'completed'),
+        (5, 'garbage')
+    )
+
+    status = models.IntegerField(choices=STATUS_CHOICES, default=0)

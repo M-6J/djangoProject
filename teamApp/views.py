@@ -13,7 +13,23 @@ import random
 # ============================================= Managing Team Here From, ===============================================
 # ===========================================  create, update, del, detail =============================================
 def team_managing(request):
-    username = request.POST.get('username')
+    """
+    GET, /team/manage
+    :param request: username(str，操作人员的用户名)
+    :return: json   [
+                        {
+                            "model": "auth.User",
+                            "pk": (int),
+                            "fields": {
+                                "username": (str，好友的用户名，用于新建团队的信息)
+                                }
+                        },
+                        {
+                            ... -> can be multiple objects
+                        }
+                    ]
+    """
+    username = request.GET.get('username')
     user = User.objects.get(username__exact=username)
     friends = User.objects.filter(profile__friend__exact=user)
     data = serializers.serialize('json', friends, fields='username')
@@ -22,6 +38,14 @@ def team_managing(request):
 
 
 def team_create(request):
+    """
+    POST, /team/create
+    :param request: username(str，操作人员的用户名), team_name(str，团队名), description(str，团队说明), region(int，以后说),
+                    member(str, 好友的用户名)
+    :return: json   [
+                        {"msg": "success"} or {"err code"}
+                    ]
+    """
     username = request.POST.get('username')  # to be creator
     self = User.objects.get(username__exact=username)
 
@@ -52,6 +76,53 @@ def team_create(request):
 
 
 def team_detail(request, pk):
+    """
+    GET, /team/detail/<int:pk>
+    :param request: none
+    :param pk: for teamApp.team
+    :return: json   [
+                        {
+                            "model": "teamApp.team",
+                            "pk": (int),
+                            "fields": {
+                                "name": (str),
+                                "description": (str),
+                                "region": (int)
+                                }
+                        }
+                    ]
+                        {
+                        }
+                    [
+                        {
+                            "model": "auth.User",
+                            "pk": (int),
+                            "fields": {
+                                "username": (str)
+                                }
+                        },
+                        {
+                            ... -> can be multiple objects
+                        }
+                    ]
+                    [
+                        {
+                            "model": "taskApp.task",
+                            "pk": (int),
+                            "fields": {
+                                "name": (str),
+                                "description": (str),
+                                "worker": (str),
+                                "start": (datetime)
+                                "ddl": (datetime)
+                                "status": (int)
+                                }
+                        },
+                        {
+                            ... -> can be multiple objects
+                        }
+                    ]
+    """
     team = Team.objects.get(pk=pk)
 
     detail = serializers.serialize('json', [team], fields=(
@@ -60,7 +131,7 @@ def team_detail(request, pk):
 
     members = User.objects.filter(member__team__exact=team)
     member_list = serializers.serialize('json', members, fields=(
-        'username'
+        'username', 'email'
     ))
 
     tasks = Task.objects.filter(team__exact=team)
@@ -96,6 +167,13 @@ def verify(team, oper, targ, typ):
 
 
 def invite_member(request):  # add member by input: email
+    """
+    POST, /team/invite
+    :param request: team_pk(int), sender(str，操作人员的用户名), rel_choice(str，是邮箱还是用户名), rel(str，那个值)
+    :return: json   [
+                        {"msg": "success"} or {"err code"}
+                    ]
+    """
     team = Team.objects.get(pk=request.POST.get('team_pk'))
     sender = User.objects.get(username__exact=request.POST.get('sender'))
 
@@ -125,8 +203,14 @@ def invite_member(request):  # add member by input: email
         return JsonResponse({'msg': 'success'})
 
 
-# add decorators here, 'creator, manager and self only' for post, get
 def del_member(request):  # quit or del member, quit: self, del: manager or creator
+    """
+    POST, /team/del
+    :param request: team_pk(int), oper(str，操作人员的用户名), target(str，对象的用户名)
+    :return: json   [
+                        {"msg": "success"} or {"err code"}
+                    ]
+    """
     team = Team.objects.get(pk=request.POST.get('team_pk'))
     oper = User.objects.get(username__exact=request.POST.get('oper'))
     target = User.objects.get(username__exact=request.POST.get('target'))
@@ -139,25 +223,46 @@ def del_member(request):  # quit or del member, quit: self, del: manager or crea
     return JsonResponse({'msg': 'success'})
 
 
-# add decorators here, 'creator only' for post, get
 def promote(request):
-    team = Team.objects.get(pk=request.GET.get('team_pk'))
-    if team.member.contains('value'):  # is contained for value
-        target = User.objects.get(pk=request.GET('user_pk'))
-        team.manager.add(target)
-        team.save()
+    """
+    POST, /team/pro
+    :param request: team_pk(int), oper(str，操作人员的用户名), target(str，对象的用户名)
+    :return: json   [
+                        {"msg": "success"} or {"err code"}
+                    ]
+    """
+    team = Team.objects.get(pk=request.POST.get('team_pk'))
+    oper = User.objects.get(username__exact=request.POST.get('oper'))
+    target = User.objects.get(username__exact=request.POST.get('target'))
+
+    tar = verify(team, oper, target, 2)
+
+    if tar.model.role < 2:
+        tar.model.role = tar.model.role + 1
+        tar.model.save()
     else:
-        return HttpResponseForbidden
+        return JsonResponse({'msg': 'err 104'})  # not allowed
 
-    return  # return to team detail
+    return JsonResponse({'msg': 'success'})
 
 
-# add decorators here, 'creator only' for post, get
 def degrade(request):
-    team = Team.objects.get(pk=request.GET('team_pk'))
-    if team == request.user.own_team:
-        team.delete()
-    else:
-        return HttpResponseForbidden
+    """
+    POST, team/deg
+    :param request: team_pk(int), oper(str，操作人员的用户名), target(str，对象的用户名)
+    :return: json   [
+                        {"msg": "success"} or {"err code"}
+                    ]
+    """
+    team = Team.objects.get(pk=request.POST.get('team_pk'))
+    oper = User.objects.get(username__exact=request.POST.get('oper'))
+    target = User.objects.get(username__exact=request.POST.get('target'))
 
-    return  # return to main
+    tar = verify(team, oper, target, 2)
+
+    if tar.model.role > 0:
+        tar.model.role = tar.model.role - 1
+        tar.model.save()
+    else:
+        return JsonResponse({'msg': 'err 104'})
+    return JsonResponse({'msg': 'success'})
