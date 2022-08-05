@@ -89,7 +89,7 @@ def signup(request):
     """
     if request.method == 'POST':
         if request.POST.get('password1') == request.POST.get('password2'):
-            if User.objects.get(username__exact=request.POST.get('username')):
+            if User.objects.filter(username__exact=request.POST.get('username')).exists():
                 return JsonResponse({'msg': 'err 201'})  # username duplicates
             user = User.objects.create_user(
                 username=request.POST.get('username'),

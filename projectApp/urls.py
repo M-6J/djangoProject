@@ -2,7 +2,7 @@ from django.urls import path
 
 from projectApp.views import *
 
-app_name = 'teamApp'
+app_name = 'projectApp'
 
 urlpatterns = [
     path('manage/', manage, name='manage'),
