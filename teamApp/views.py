@@ -57,7 +57,11 @@ def team_create(request):
     """ -> create team in team manage page (modal pop-up)
     POST, /team/create
     :param request: username(str，操作人员的用户名), team_name(str，团队名), description(str，团队说明), region(int，以后说),
-                    member(str, 好友的用户名)
+                    members(str, 好友的集合, 可以多个):    [
+                                                            {"member“: "好友一的用户名"}, -> member(str, 那个好友的用户名)
+                                                            {"member": "好友二的用户名"},
+                                                            . . .
+                                                        ]
     :return: json   [
                         {"msg": "success"} or {"err code"}
                     ]
@@ -80,10 +84,10 @@ def team_create(request):
     new_team = Team.objects.create(name=team_name, description=description, region=choice)
     new_team.member.add(creator)
 
-    member = data.getlist('username', None)
+    members = data.get('members')
 
-    for i in member:
-        user = User.objects.get(username__exact=i)
+    for i in members:
+        user = User.objects.get(username__exact=i.get('member'))
         j = Member.objects.create(user=user, role=0)
         j.save()
 
