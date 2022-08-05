@@ -10,6 +10,13 @@ from teamApp.models import Team, Member
 import random
 
 
+def method_auth(request, method):
+    if request.method == method:
+        pass
+    else:
+        return JsonResponse({'msg': 'err 200'})
+
+
 # ============================================= Managing Team Here From, ===============================================
 # ===========================================  create, update, del, detail =============================================
 def team_managing(request):
@@ -29,6 +36,9 @@ def team_managing(request):
                         }
                     ]
     """
+
+    method_auth(request, 'GET')
+
     username = request.GET.get('username')
     user = User.objects.get(username__exact=username)
     friends = User.objects.filter(profile__friend__exact=user)
@@ -46,6 +56,9 @@ def team_create(request):
                         {"msg": "success"} or {"err code"}
                     ]
     """
+
+    method_auth(request, 'POST')
+
     username = request.POST.get('username')  # to be creator
     self = User.objects.get(username__exact=username)
 
@@ -123,6 +136,9 @@ def team_detail(request, pk):
                         }
                     ]
     """
+
+    method_auth(request, 'GET')
+
     team = Team.objects.get(pk=pk)
 
     detail = serializers.serialize('json', [team], fields=(
@@ -174,6 +190,9 @@ def invite_member(request):  # add member by input: email
                         {"msg": "success"} or {"err code"}
                     ]
     """
+
+    method_auth(request, 'POST')
+
     team = Team.objects.get(pk=request.POST.get('team_pk'))
     sender = User.objects.get(username__exact=request.POST.get('sender'))
 
@@ -211,6 +230,9 @@ def del_member(request):  # quit or del member, quit: self, del: manager or crea
                         {"msg": "success"} or {"err code"}
                     ]
     """
+
+    method_auth(request, 'POST')
+
     team = Team.objects.get(pk=request.POST.get('team_pk'))
     oper = User.objects.get(username__exact=request.POST.get('oper'))
     target = User.objects.get(username__exact=request.POST.get('target'))
@@ -231,6 +253,9 @@ def promote(request):
                         {"msg": "success"} or {"err code"}
                     ]
     """
+
+    method_auth(request, 'POST')
+
     team = Team.objects.get(pk=request.POST.get('team_pk'))
     oper = User.objects.get(username__exact=request.POST.get('oper'))
     target = User.objects.get(username__exact=request.POST.get('target'))
@@ -254,6 +279,9 @@ def degrade(request):
                         {"msg": "success"} or {"err code"}
                     ]
     """
+
+    method_auth(request, 'POST')
+
     team = Team.objects.get(pk=request.POST.get('team_pk'))
     oper = User.objects.get(username__exact=request.POST.get('oper'))
     target = User.objects.get(username__exact=request.POST.get('target'))
