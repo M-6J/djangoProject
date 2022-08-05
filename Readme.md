@@ -1,11 +1,19 @@
 ## Project version3
 - 主要任务是 前端和后端 链接 Refactoring
+
 - Django Backend Final Version
 
 - python -m pip install --upgrade pip
+
 - Python 3.10.2
+
 - Django 4.0.6
+
 - pip install django-cors-headers
+
+- ```py
+  pip install djangorestframework
+  ```
 
 ## 注意事项
 - csrf 处理

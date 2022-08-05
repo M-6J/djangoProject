@@ -1,3 +1,4 @@
+from rest_framework.parsers import JSONParser
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -91,11 +92,14 @@ def signup(request):
         if request.POST.get('password1') == request.POST.get('password2'):
             if User.objects.filter(username__exact=request.POST.get('username')).exists():
                 return JsonResponse({'msg': 'err 201'})  # username duplicates
+            data = JSONParser().parse(request)
+            print(data['username'])
             user = User.objects.create_user(
-                username=request.POST.get('username'),
-                password=request.POST.get('password1'),
-                email=request.POST.get('email')
+                username=data['username'],
+                password=data['password1'],
+                email=data['email']
             )
+
             auth.login(request, user)
             return JsonResponse({'msg': 'success'})
     else:
