@@ -22,7 +22,7 @@ def manage(request):
 @csrf_exempt
 def create(request):
     """
-
+    POST, /project/create/
     :param request:
     :return:
     """
@@ -30,9 +30,14 @@ def create(request):
 
     data = json.loads(request.body)
 
-    project = Project.objects.create(name=data.get())
+    project = Project.objects.create(
+        name=data.get('project_name'),
+        description=data.get('description'),
+        team_id=data.get('team_pk')
+    )
+    project.save()
 
-    pass
+    return JsonResponse({'msg': 'success'})
 
 
 @csrf_exempt

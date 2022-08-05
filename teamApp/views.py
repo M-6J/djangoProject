@@ -24,7 +24,7 @@ def method_auth(request, method):
 @csrf_exempt
 def team_managing(request):
     """ -> team manage page
-    GET, /team/manage
+    GET, /team/manage/
     :param request: username(str，操作人员的用户名)
     :return: json   [
                         {
@@ -55,13 +55,13 @@ def team_managing(request):
 @csrf_exempt
 def team_create(request):
     """ -> create team in team manage page (modal pop-up)
-    POST, /team/create
+    POST, /team/create/
     :param request: username(str，操作人员的用户名), team_name(str，团队名), description(str，团队说明), region(int，以后说),
-                    members(str, 好友的集合, 可以多个):    [
-                                                            {"member“: "好友一的用户名"}, -> member(str, 那个好友的用户名)
-                                                            {"member": "好友二的用户名"},
-                                                            . . .
-                                                        ]
+                    "members":  [   -> members = Json list
+                                    {"member“: "好友一的用户名"}, -> member(str, 那个好友的用户名)
+                                    {"member": "好友二的用户名"},
+                                    . . .
+                                ]
     :return: json   [
                         {"msg": "success"} or {"err code"}
                     ]
@@ -103,7 +103,7 @@ def team_create(request):
 @csrf_exempt
 def team_detail(request, pk):
     """ -> detail page for team
-    GET, /team/detail/<int:pk>
+    GET, /team/detail/<int:pk>/
     :param request: none
     :param pk: for teamApp.team
     :return: json   [
@@ -194,7 +194,7 @@ def verify(team, oper, targ, typ):
 @csrf_exempt
 def invite_member(request):  # add member by input: email
     """ -> invite member
-    POST, /team/invite
+    POST, /team/invite/
     :param request: team_pk(int), sender(str，操作人员的用户名), rel_choice(str，是邮箱还是用户名), rel(str，那个值)
     :return: json   [
                         {"msg": "success"} or {"err code"}
@@ -237,7 +237,7 @@ def invite_member(request):  # add member by input: email
 @csrf_exempt
 def del_member(request):  # quit or del member, quit: self, del: manager or creator
     """ -> delete member
-    POST, /team/del
+    POST, /team/del/
     :param request: team_pk(int), oper(str，操作人员的用户名), target(str，对象的用户名)
     :return: json   [
                         {"msg": "success"} or {"err code"}
@@ -263,7 +263,7 @@ def del_member(request):  # quit or del member, quit: self, del: manager or crea
 @csrf_exempt
 def promote(request):
     """ -> promote member (member -> manager)
-    POST, /team/pro
+    POST, /team/pro/
     :param request: team_pk(int), oper(str，操作人员的用户名), target(str，对象的用户名)
     :return: json   [
                         {"msg": "success"} or {"err code"}
@@ -292,7 +292,7 @@ def promote(request):
 @csrf_exempt
 def degrade(request):
     """ -> degrade member (manager -> member)
-    POST, team/deg
+    POST, /team/deg/
     :param request: team_pk(int), oper(str，操作人员的用户名), target(str，对象的用户名)
     :return: json   [
                         {"msg": "success"} or {"err code"}

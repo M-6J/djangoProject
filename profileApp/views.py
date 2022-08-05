@@ -83,7 +83,7 @@ def accept(request, verif):  # accept invite with verif code: verif code generat
 @csrf_exempt
 def signup(request):
     """ -> signup
-    POST, /profile/signup
+    POST, /profile/signup/
     :param request: 'username(str)', 'password1(str)', 'password2(str)', 'email(str)'
     :return: Json   [
                         {'msg': 'success'} or {'errcode'}
@@ -108,7 +108,7 @@ def signup(request):
 @csrf_exempt
 def login(request):
     """ -> login
-    POST, /profile/login
+    POST, /profile/login/
     :param request: username(str), password(str)
     :return: Json   [
                         {'msg': 'success'} or {'errcode'}
