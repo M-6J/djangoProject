@@ -1,9 +1,10 @@
 ## Project version3
 - Django Backend Final Version
 
-Python 3.10.2
-Django 4.0.6
-python -m pip install --upgrade pip
+- python -m pip install --upgrade pip
+- Python 3.10.2
+- Django 4.0.6
+
 
 
 ### use venv virtual environment
