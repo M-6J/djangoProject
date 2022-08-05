@@ -5,7 +5,11 @@
 - python -m pip install --upgrade pip
 - Python 3.10.2
 - Django 4.0.6
+- pip install django-cors-headers
 
+## 注意事项
+- csrf 处理
+- cors 处理
 
 
 ### use venv virtual environment
