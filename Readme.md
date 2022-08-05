@@ -26,4 +26,6 @@
 - Member : 团队里有3种人， member，manager，creater（super manager）
 
 ### view介绍
--
+
+#### ProfileApp
+- notice_view : 招待技能， 用户可以看见自己是否被招待
