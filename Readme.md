@@ -5,6 +5,7 @@
 - python -m pip install --upgrade pip
 - Python 3.10.2
 - Django 4.0.6
+- pip install django-cors-headers
 
 
 
