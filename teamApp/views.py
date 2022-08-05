@@ -13,7 +13,7 @@ import random
 # ============================================= Managing Team Here From, ===============================================
 # ===========================================  create, update, del, detail =============================================
 def team_managing(request):
-    """
+    """ -> team manage page
     GET, /team/manage
     :param request: username(str，操作人员的用户名)
     :return: json   [
@@ -38,7 +38,7 @@ def team_managing(request):
 
 
 def team_create(request):
-    """
+    """ -> create team in team manage page (modal pop-up)
     POST, /team/create
     :param request: username(str，操作人员的用户名), team_name(str，团队名), description(str，团队说明), region(int，以后说),
                     member(str, 好友的用户名)
@@ -76,7 +76,7 @@ def team_create(request):
 
 
 def team_detail(request, pk):
-    """
+    """ -> detail page for team
     GET, /team/detail/<int:pk>
     :param request: none
     :param pk: for teamApp.team
@@ -167,7 +167,7 @@ def verify(team, oper, targ, typ):
 
 
 def invite_member(request):  # add member by input: email
-    """
+    """ -> invite member
     POST, /team/invite
     :param request: team_pk(int), sender(str，操作人员的用户名), rel_choice(str，是邮箱还是用户名), rel(str，那个值)
     :return: json   [
@@ -204,7 +204,7 @@ def invite_member(request):  # add member by input: email
 
 
 def del_member(request):  # quit or del member, quit: self, del: manager or creator
-    """
+    """ -> delete member
     POST, /team/del
     :param request: team_pk(int), oper(str，操作人员的用户名), target(str，对象的用户名)
     :return: json   [
@@ -224,7 +224,7 @@ def del_member(request):  # quit or del member, quit: self, del: manager or crea
 
 
 def promote(request):
-    """
+    """ -> promote member (member -> manager)
     POST, /team/pro
     :param request: team_pk(int), oper(str，操作人员的用户名), target(str，对象的用户名)
     :return: json   [
@@ -247,7 +247,7 @@ def promote(request):
 
 
 def degrade(request):
-    """
+    """ -> degrade member (manager -> member)
     POST, team/deg
     :param request: team_pk(int), oper(str，操作人员的用户名), target(str，对象的用户名)
     :return: json   [
