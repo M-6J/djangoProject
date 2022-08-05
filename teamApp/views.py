@@ -6,6 +6,7 @@ from django.http import HttpResponseForbidden, JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from profileApp.models import Notice
+from projectApp.models import Project
 from taskApp.models import Task
 from teamApp.models import Team, Member
 import random
@@ -150,15 +151,15 @@ def team_detail(request, pk):
         'username', 'email'
     ))
 
-    tasks = Task.objects.filter(team__exact=team)
-    task_list = serializers.serialize('json', tasks, fields=(
-        'name', 'description', 'worker', 'start', 'ddl'
+    projects = Project.objects.filter(team__exact=team)
+    project_list = serializers.serialize('json', projects, fields=(
+        'name', 'description'
     ))
 
     data = {
         detail,
         member_list,
-        task_list
+        project_list
     }
 
     return HttpResponse(content=data)
