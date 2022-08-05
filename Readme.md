@@ -34,11 +34,11 @@
 - login ： 用户登录 ，（username，password）
 
 #### TeamAPP
-- team_managing ：
-- team_create :
-- team_detail :
-- verify :
-- invite_member :
-- del_member :
-- promote :
-- degrade :
+- team_managing ：管理团队
+- team_create : 团队创建
+- team_detail : 查看团队信息
+- verify : 
+- invite_member : 发邀请
+- del_member : 删除
+- promote : 升级 团队成员 -> 团队管理者
+- degrade : 降低 团队管理者 -> 团队成员
