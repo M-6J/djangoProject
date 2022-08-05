@@ -2,7 +2,7 @@
 - Django Backend Final Version
 
 Python 3.10.2
-
+Django 4.0.6
 python -m pip install --upgrade pip
 
 
