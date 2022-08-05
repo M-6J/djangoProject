@@ -1,4 +1,5 @@
 ## Project version3
+- 主要任务是 前端和后端 链接 Refactoring
 - Django Backend Final Version
 
 - python -m pip install --upgrade pip
