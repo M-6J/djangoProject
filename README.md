@@ -1,5 +1,6 @@
 # djangoProject
 ## Project Verion1
+- Django BackEnd ProtoType1
 
 ### use venv virtual environment
 - python -m venv venv
