@@ -15,6 +15,8 @@ def method_auth(request, method):
         return JsonResponse({'msg': 'err 200'})
 
 
+# ================================================= Notice Here From, ==================================================
+# ===============================================  view, accept(delete) ================================================
 def notice_view(request):
     """
     GET, /profile/notices
@@ -73,6 +75,8 @@ def accept(request, verif):  # accept invite with verif code: verif code generat
         return JsonResponse({'msg': 'err 404'})
 
 
+# ===================================================== Auth here ======================================================
+# ============================================== signup, login and update ==============================================
 def signup(request):
     """ -> signup
     POST, /profile/signup
@@ -116,3 +120,18 @@ def login(request):
     else:
         return JsonResponse({'msg': 'err 200'})
 
+
+# ============================================= Profile Pages Here From, ===============================================
+# =================================================  detail and edit ===================================================
+
+
+def detail(request, pk):
+    method_auth(request, 'GET')
+
+    pass
+
+
+def edit(request):
+    method_auth(request, 'POST')
+
+    pass
