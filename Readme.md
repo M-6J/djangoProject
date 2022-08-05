@@ -37,8 +37,8 @@
 - team_managing ：管理团队
 - team_create : 团队创建
 - team_detail : 查看团队信息
-- verify : 
+- verify : 认证
 - invite_member : 发邀请
-- del_member : 删除
+- del_member : 删除 团队成员
 - promote : 升级 团队成员 -> 团队管理者
 - degrade : 降低 团队管理者 -> 团队成员
