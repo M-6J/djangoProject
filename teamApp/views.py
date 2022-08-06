@@ -73,7 +73,7 @@ def team_create(request):
 
     data = json.loads(request.body)
 
-    username = data.get('username')  # to be creator
+    username = data.get('username')  # to be creator 1
     self = User.objects.get(username__exact=username)
 
     creator = Member.objects.create(user=self, role=2)
