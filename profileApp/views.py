@@ -43,7 +43,7 @@ def notice_view(request):
 
     method_auth(request, 'GET')
 
-    receiver = User.objects.get(request.GET.get('username'))
+    receiver = User.objects.get(username__exact=request.GET.get('username'))
     notices = Notice.objects.filter(receiver__exact=receiver)
 
     if not Notice.objects.filter(receiver__exact=receiver).exists():
