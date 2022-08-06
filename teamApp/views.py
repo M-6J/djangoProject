@@ -55,6 +55,32 @@ def team_managing(request):
 
 
 @csrf_exempt
+def team_list(request):
+    """
+    GET, team/list/
+    :param request: username(str，操作人员的用户名)
+    :return: ..
+    """
+
+    method_auth(request, 'GET')
+
+    username = request.GET.get('username')
+
+    teams = Team.objects.filter(member__user__username=username)
+
+    if not teams.exists():
+        return JsonResponse({'msg': 'no teams you joined'})
+
+    data = serializers.serialize('json', teams, fields=(
+        'team', 'name', 'description', 'region', 'member'
+    ))
+
+    return HttpResponse(content=data)
+
+
+
+
+@csrf_exempt
 def team_create(request):
     """ -> create team in team manage page (modal pop-up)
     POST, /team/create/
@@ -119,8 +145,6 @@ def team_detail(request, pk):
                                 }
                         }
                     ]
-                        {
-                        }
                     [
                         {
                             "model": "auth.user",
