@@ -28,7 +28,7 @@ def member_auth(user_pk, team_pk):
 @csrf_exempt
 def manage(request):
     """
-    GET, /project/create/
+    GET, /project/manage/
     :param request: team_pk(int) -> team_pk = team id
                     username(str) -> 操作人员的用户名
     :return: Json (project list)
