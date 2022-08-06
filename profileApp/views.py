@@ -43,8 +43,11 @@ def notice_view(request):
 
     method_auth(request, 'GET')
 
-    profile = Profile.objects.get(user__username__exact=request.GET.get('username'))
+    profile = Profile.objects.get_or_create(user__username__exact=request.GET.get('username'))
     notices = Notice.objects.filter(receiver__profile__exact=profile)
+
+    if not notices.exists():
+        return JsonResponse({'msg': 'no notices'})
 
     notice_list = serializers.serialize('Json', notices, fields=(
         'sender', 'content', 'team_pk', 'verif'
@@ -100,6 +103,10 @@ def signup(request):
                 email=data.get('email')
             )
             auth.login(request, user)
+
+            profile = Profile.objects.create(user=user, description='', identity='')
+            profile.save()
+
             return JsonResponse({'msg': 'success'})
     else:
         return JsonResponse({'msg': 'err 200'})  # method err

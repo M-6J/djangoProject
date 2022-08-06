@@ -89,7 +89,7 @@ def team_create(request):
     members = data.get('members')
 
     for i in members:
-        user = User.objects.get(username__exact=i.get('member'))
+        user = User.objects.get(username__exact=i['member'])
         j = Member.objects.create(user=user, role=0)
         j.save()
 
