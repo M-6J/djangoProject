@@ -42,9 +42,13 @@ def team_managing(request):
 
     method_auth(request, 'GET')
 
-    data = json.loads(request.body)
+    username = request.GET.get('username', None)
 
-    username = data.get('username')
+    if username is None:
+        return JsonResponse({'msg': 'need login'})
+    elif not username == request.user.username:
+        return JsonResponse({'msg': 'err 401'})
+
     user = User.objects.get(username__exact=username)
     friends = User.objects.filter(profile__friend__exact=user)
     data = serializers.serialize('json', friends, fields='username')
