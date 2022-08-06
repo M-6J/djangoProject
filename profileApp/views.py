@@ -1,4 +1,3 @@
-import requests
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
