@@ -43,8 +43,7 @@ def notice_view(request):
 
     method_auth(request, 'GET')
 
-    profile = Profile.objects.get_or_create(user__username__exact=request.GET.get('username'))
-    notices = Notice.objects.filter(receiver__profile__exact=profile)
+    notices = Notice.objects.filter(receiver__exact=User.objects.get(request.GET.get('username')))
 
     if not notices.exists():
         return JsonResponse({'msg': 'no notices'})
