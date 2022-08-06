@@ -164,7 +164,7 @@ def add_friend(request):
 
     data = json.loads(request.body)
 
-    me = Profile.objects.get(user__username__exact=data.get('username'))
+    me = Profile.objects.get(user__username=data.get('username'))
     tar = User.objects.filter(username__exact=data.get('friend_username'))
 
     if not tar.exists():
