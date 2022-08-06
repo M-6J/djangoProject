@@ -165,11 +165,11 @@ def add_friend(request):
     data = json.loads(request.body)
 
     me = Profile.objects.get(user__username=data.get('username'))
-    tar = User.objects.filter(username__exact=data.get('friend_username'))
 
-    if not tar.exists():
+    if not User.objects.filter(username=data.get('friend_username')).exists():
         return JsonResponse({'msg': 'target user not exist'})
 
+    tar = User.objects.get(username__exact=data.get('friend_username'))
     tar_p = Profile.objects.get(user__exact=tar)
 
     me.friend.add(tar)
