@@ -149,3 +149,33 @@ def edit(request):
     method_auth(request, 'POST')
 
     pass
+
+
+@csrf_exempt
+def add_friend(request):
+    """
+    POST, /profile/add/
+    :param request: username(str), friend_username(str)
+    :return: Json   [
+                        {'msg': 'success'} or {'errcode'}
+                    ]
+    """
+    method_auth(request, 'POST')
+
+    data = json.loads(request.body)
+
+    me = Profile.objects.get(user__username__exact=data.get('username'))
+    tar = User.objects.filter(username__exact=data.get('friend_username'))
+
+    if not tar.exists():
+        return JsonResponse({'msg': 'target user not exist'})
+
+    tar_p = Profile.objects.get(user__exact=tar)
+
+    me.friend.add(tar)
+    tar_p.friend.add(me.user)
+
+    me.save()
+    tar_p.save()
+
+    return JsonResponse({'msg': 'success'})
