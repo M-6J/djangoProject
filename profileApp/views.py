@@ -1,3 +1,4 @@
+import requests
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -43,12 +44,13 @@ def notice_view(request):
 
     method_auth(request, 'GET')
 
-    notices = Notice.objects.filter(receiver__exact=User.objects.get(request.GET.get('username')))
+    receiver = User.objects.get(request.GET.get('username'))
+    notices = Notice.objects.filter(receiver__exact=receiver)
 
-    if not notices.exists():
+    if not Notice.objects.filter(receiver__exact=receiver).exists():
         return JsonResponse({'msg': 'no notices'})
 
-    notice_list = serializers.serialize('Json', notices, fields=(
+    notice_list = serializers.serialize('json', notices, fields=(
         'sender', 'content', 'team_pk', 'verif'
     ))
 
