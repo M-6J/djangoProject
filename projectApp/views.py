@@ -31,7 +31,7 @@ def manage(request):
     GET, /project/create/
     :param request: team_pk(int) -> team_pk = team id
                     username(str) -> 操作人员的用户名
-    :return:
+    :return: Json (project list)
     """
     method_auth(request, 'GET')
 
@@ -53,7 +53,7 @@ def create(request):
     :param request: project_name(str), description(str),
                     team_pk(int) -> team_pk = team id
                     username(str) -> 操作人员的用户名
-    :return:
+    :return: Json (success or other)
     """
     method_auth(request, 'POST')
 
@@ -74,8 +74,8 @@ def detail(request, pk):
     """
     GET, /project/detail/<int:pk>/ -> pk = pk for project
     :param request:
-    :param pk:
-    :return:
+    :param pk:  pk for project
+    :return: Json (project's name and description)
     """
     method_auth(request, 'GET')
 
@@ -95,7 +95,7 @@ def update(request):
     :param request: project_pk(int) ->  -> pk = pk for project
                     re_name(str), re_description(str)
                     username(str) -> 操作人员的用户名
-    :return:
+    :return: Json (success or other)
     """
     method_auth(request, 'POST')
 
@@ -116,7 +116,7 @@ def delete(request):
     POST, /project/delete/
     :param request: project_pk(int) -> pk for project
                     username(str) -> 操作人员的用户名
-    :return:
+    :return: Json (success or other)
     """
     method_auth(request, 'POST')
 
