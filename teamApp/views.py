@@ -1,15 +1,15 @@
+import json
+import random
 import string
 
 from django.contrib.auth.models import User
 from django.core import serializers
-from django.http import HttpResponseForbidden, JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from profileApp.models import Notice
 from projectApp.models import Project
-from taskApp.models import Task
 from teamApp.models import Team, Member
-import random, json
 
 
 def method_auth(request, method):
@@ -46,8 +46,6 @@ def team_managing(request):
 
     if username is None:
         return JsonResponse({'msg': 'need login'})
-    elif not username == request.user.username:
-        return JsonResponse({'msg': 'err 401'})
 
     user = User.objects.get(username__exact=username)
     friends = User.objects.filter(profile__friend__exact=user)
