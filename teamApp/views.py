@@ -196,7 +196,8 @@ def team_detail(request, pk):
         project_list
     }
 
-    return HttpResponse(content=data)
+    #return HttpResponse(content=data)
+    return JsonResponse({'data': data})
 
 
 # ============================================ Managing Members Here From, =============================================
