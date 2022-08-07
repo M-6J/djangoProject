@@ -22,7 +22,7 @@
 - python manage.py createsuperuser : make admin account
 - python manage.py runserver
 
-### model介绍
+## model介绍
 #### profileAPP
 - Profile : 用户 model
 - Notice ： 邀请技能
@@ -37,8 +37,7 @@
 - Team : 团队有6种，可以选择段对种类
 - Member : 团队里有3种人， member，manager，creator（super manager）
 
-### view介绍
-
+## view介绍
 #### ProfileApp
 - notice_view : 邀请技能， 用户可以看见邀请
 - accept ： 接受邀请， 用户可以选择是否被邀请
