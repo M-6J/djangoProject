@@ -190,13 +190,19 @@ def team_detail(request, pk):
         'name', 'description'
     ))
 
-    data = {
-        detail,
-        member_list,
-        project_list
+    d1 = json.loads(detail)
+    d2 = json.loads(member_list)
+    d3 = json.loads(project_list)
+
+    context = {
+        'detail': d1,
+        'members': d2,
+        'projects': d3
     }
 
-    return HttpResponse(content=data)
+    dt = json.dumps(context, indent=2)
+
+    return HttpResponse(content=dt)
 
 
 # ============================================ Managing Members Here From, =============================================
