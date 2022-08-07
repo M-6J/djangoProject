@@ -38,11 +38,22 @@
 - Member : 团队里有3种人， member，manager，creator（super manager）
 
 ## view介绍
+
 #### ProfileApp
 - notice_view : 邀请技能， 用户可以看见邀请
 - accept ： 接受邀请， 用户可以选择是否被邀请
 - signup ： 用户注册，（email，username，passowrd）
 - login ： 用户登录 ，（username，password）
+- detail :
+- edit :
+- add_friend : 加朋友技能
+
+#### ProjectAPP
+- manage ： 确认用户 team_id 然后 返还 team 项目
+- create ： 创建项目
+- detail ： 看项目详细内容
+- update ： 修改项目
+- delete :  删除项目
 
 #### TeamAPP
 - team_managing ：管理团队
