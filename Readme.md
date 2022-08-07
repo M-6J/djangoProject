@@ -30,7 +30,10 @@
 #### projectAPP
 - Project : 项目
 
+#### taskAPP
 - Task : 任务，用户可以做Task
+
+#### teamAPP
 - Team : 团队有6种，可以选择段对种类
 - Member : 团队里有3种人， member，manager，creator（super manager）
 
