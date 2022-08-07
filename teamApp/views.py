@@ -196,10 +196,6 @@ def team_detail(request, pk):
         project_list
     }
 
-    data = serializers.serialize('Json', data, fields=(  # return fields of this project
-        'detail', 'member_list','project_list'
-    ))
-    
     return HttpResponse(content=data)
 
 
