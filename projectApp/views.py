@@ -1,8 +1,4 @@
-import operator
-from functools import reduce
-
 from django.contrib.auth.models import User
-from django.contrib.postgres.search import SearchVector
 from django.core import serializers
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
@@ -87,23 +83,19 @@ def detail(request, pk):  # read data in project where: project(pk=pk)
 def search(request, pk):
     """
     GET, /project/search/<int:pk> -> pk for team(pk=pk)
-    :param request:
-    :return:
+    :param request: search(str) -> 'Guan Jian Ci'
+    :return: Json
     """
     method_auth(request, 'GET')
 
-    search_words = request.GET['search'].split()
+    search_words = request.GET['search']
 
-    qs = reduce(operator.or_, (Q(name=i) for i in search_words))
-
-    projects = Project.objects.filter(team_id=pk)
-
-    projects = projects.annotate(
-        search=SearchVector('name'),
-    ).filter(search=qs)
+    projects = Project.objects.filter(team_id=pk).filter(
+        Q(name__icontains=search_words) | Q(description__icontains=search_words)
+    )
 
     result = serializers.serialize('json', projects, fields=(
-        'name'
+        'name', 'description'
     ))
 
     return HttpResponse(content=result)
@@ -183,7 +175,7 @@ def delete(request):  # delete project where: project(pk=pk)
 def copy(request):
     """
     POST, /project/copy
-    :param request:
+    :param request: project_pk(int) -> pk for project(id=pk)
     :return: Json, {success or something err}
     """
     method_auth(request, 'POST')
