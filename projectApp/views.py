@@ -1,6 +1,10 @@
+import operator
+from functools import reduce
+
 from django.contrib.auth.models import User
 from django.contrib.postgres.search import SearchVector
 from django.core import serializers
+from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -51,11 +55,11 @@ def manage(request):  # -> loads project list where: team(pk=pk)
 
     projects = Project.objects.filter(team_id__exact=team_pk)
 
-    data = serializers.serialize('Json', projects, fields=(
+    data = serializers.serialize('json', projects, fields=(
         'name'
     ))
 
-    return HttpResponse('Json', data)
+    return HttpResponse('json', data)
 
 
 @csrf_exempt
@@ -72,7 +76,7 @@ def detail(request, pk):  # read data in project where: project(pk=pk)
 
     check_null(pk)
 
-    data = serializers.serialize('Json', project, fields=(  # return fields of this project
+    data = serializers.serialize('json', project, fields=(  # return fields of this project
         'name', 'description'
     ))
 
@@ -80,19 +84,29 @@ def detail(request, pk):  # read data in project where: project(pk=pk)
 
 
 @csrf_exempt
-def search(request):
+def search(request, pk):
     """
-    GET, /project/search/<int:pk>
+    GET, /project/search/<int:pk> -> pk for team(pk=pk)
     :param request:
     :return:
     """
     method_auth(request, 'GET')
 
-    projects = Project.objects.annotate(search=SearchVector(
-        'name', 'description',
-    )).filter()
+    search_words = request.GET['search'].split()
 
-    pass
+    qs = reduce(operator.or_, (Q(name=i) for i in search_words))
+
+    projects = Project.objects.filter(team_id=pk)
+
+    projects = projects.annotate(
+        search=SearchVector('name'),
+    ).filter(search=qs)
+
+    result = serializers.serialize('json', projects, fields=(
+        'name'
+    ))
+
+    return HttpResponse(content=result)
 
 
 # ======================================================================================================================
