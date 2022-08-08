@@ -78,8 +78,6 @@ def team_list(request):
     return HttpResponse(content=data)
 
 
-
-
 @csrf_exempt
 def team_create(request):
     """ -> create team in team manage page (modal pop-up)

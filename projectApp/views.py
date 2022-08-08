@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.postgres.search import SearchVector
 from django.core import serializers
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -8,8 +9,17 @@ from projectApp.models import Project
 from teamApp.models import Member, Team
 
 
+# =============================================== not completed yet ====================================================
+# ============================================ has to be refactored, gn ================================================
 def method_auth(request, method):
     if request.method == method:
+        pass
+    else:
+        return JsonResponse({'msg': 'err 200'})
+
+
+def check_null(pk):
+    if Project.objects.filter(pk=pk).exists():
         pass
     else:
         return JsonResponse({'msg': 'err 200'})
@@ -25,8 +35,10 @@ def member_auth(user_pk, team_pk):
         return JsonResponse({'msg': 'err 501'})
 
 
+# ======================================================================================================================
+# ======================================================================================================================
 @csrf_exempt
-def manage(request):
+def manage(request):  # -> loads project list where: team(pk=pk)
     """
     GET, /project/manage/
     :param request: team_pk(int) -> team_pk = team id
@@ -47,7 +59,46 @@ def manage(request):
 
 
 @csrf_exempt
-def create(request):
+def detail(request, pk):  # read data in project where: project(pk=pk)
+    """
+    GET, /project/detail/<int:pk>/ -> pk = pk for project
+    :param request:
+    :param pk:  pk for project
+    :return: Json (project's name and description)
+    """
+    method_auth(request, 'GET')
+
+    project = Project.objects.get(pk=pk)
+
+    check_null(pk)
+
+    data = serializers.serialize('Json', project, fields=(  # return fields of this project
+        'name', 'description'
+    ))
+
+    return HttpResponse(content=data)
+
+
+# @csrf_exempt
+# def search(request):
+#     """
+#     GET, /project/search/
+#     :param request:
+#     :return:
+#     """
+#     method_auth(request, 'GET')
+#
+#     projects = Project.objects.annotate(search=SearchVector(
+#         'name', 'description', 'content'
+#     )).filter()
+#
+#     pass
+
+
+# ======================================================================================================================
+# ======================================================================================================================
+@csrf_exempt
+def create(request):  # -> create project where: team(pk=pk)
     """
     POST, /project/create/
     :param request: project_name(str), description(str),
@@ -70,28 +121,9 @@ def create(request):
 
 
 @csrf_exempt
-def detail(request, pk):
+def update(request):  # update data in project where: project(pk=pk)
     """
-    GET, /project/detail/<int:pk>/ -> pk = pk for project
-    :param request:
-    :param pk:  pk for project
-    :return: Json (project's name and description)
-    """
-    method_auth(request, 'GET')
-
-    project = Project.objects.get(pk=pk)
-
-    data = serializers.serialize('Json', project, fields=(  # return fields of this project
-        'name', 'description'
-    ))
-
-    return HttpResponse(content=data)
-
-
-@csrf_exempt
-def update(request):
-    """
-    GET, /project/update/
+    POST, /project/update/
     :param request: project_pk(int) ->  -> pk = pk for project
                     re_name(str), re_description(str)
                     username(str) -> 操作人员的用户名
@@ -100,6 +132,8 @@ def update(request):
     method_auth(request, 'POST')
 
     data = json.loads(request.body)
+
+    check_null(data.get('project_pk'))
 
     project = Project.objects.get(pk=data.get('project_pk'))
 
@@ -111,7 +145,7 @@ def update(request):
 
 
 @csrf_exempt
-def delete(request):
+def delete(request):  # delete project where: project(pk=pk)
     """
     POST, /project/delete/
     :param request: project_pk(int) -> pk for project
@@ -122,8 +156,35 @@ def delete(request):
 
     data = json.loads(request.body)
 
+    check_null(data.get('project_pk'))
+
     project = Project.objects.get(pk=data.get('project_pk'))
 
     project.delete()
+
+    return JsonResponse({'msg': 'success'})
+
+
+@csrf_exempt
+def copy(request):
+    """
+    POST, /project/copy
+    :param request:
+    :return:
+    """
+    method_auth(request, 'POST')
+
+    data = json.loads(request.body)
+
+    check_null(data.get('project_pk'))
+
+    origin = Project.objects.get(pk=data.get('project_pk'))
+
+    copy_ = Project.objects.create(
+        name=origin.name + '_copy',
+        description=origin.description,
+        team=origin.team
+    )
+    copy_.save()
 
     return JsonResponse({'msg': 'success'})
