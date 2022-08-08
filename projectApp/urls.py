@@ -1,6 +1,6 @@
 from django.urls import path
 
-from projectApp.views import manage, create, detail, update, delete, copy
+from projectApp.views import manage, create, detail, update, delete, copy, search
 
 app_name = 'projectApp'
 
@@ -11,4 +11,6 @@ urlpatterns = [
     path('update/', update, name='update'),  # update project
     path('delete/', delete, name='delete'),  # delete project
     path('copy/', copy, name='copy'),  # copy project
+
+    path('search/<int:pk>', search, name='search')
 ]

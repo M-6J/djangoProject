@@ -79,20 +79,20 @@ def detail(request, pk):  # read data in project where: project(pk=pk)
     return HttpResponse(content=data)
 
 
-# @csrf_exempt
-# def search(request):
-#     """
-#     GET, /project/search/
-#     :param request:
-#     :return:
-#     """
-#     method_auth(request, 'GET')
-#
-#     projects = Project.objects.annotate(search=SearchVector(
-#         'name', 'description', 'content'
-#     )).filter()
-#
-#     pass
+@csrf_exempt
+def search(request):
+    """
+    GET, /project/search/<int:pk>
+    :param request:
+    :return:
+    """
+    method_auth(request, 'GET')
+
+    projects = Project.objects.annotate(search=SearchVector(
+        'name', 'description',
+    )).filter()
+
+    pass
 
 
 # ======================================================================================================================
