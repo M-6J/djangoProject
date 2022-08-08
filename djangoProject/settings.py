@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'profileApp',
     'teamApp',
     'projectApp',
+    'docApp',
 
     'corsheaders'
 ]
