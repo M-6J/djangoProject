@@ -94,10 +94,12 @@ def search(request, pk):
         Q(name__icontains=search_words) | Q(description__icontains=search_words)
     )
 
-    result = serializers.serialize('json', projects, fields=(
-        'name', 'description', 'created_at', 'updated_at'
-    ))
-
+    if not projects.exists():
+        return JsonResponse({'msg': 'no result'})
+    else:
+        result = serializers.serialize('json', projects, fields=(
+            'name', 'description', 'created_at', 'updated_at'
+        ))
     return HttpResponse(content=result)
 
 
