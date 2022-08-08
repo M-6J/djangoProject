@@ -13,8 +13,6 @@ class Project(models.Model):
     updated_at = models.DateTimeField(auto_now=True)  # -> updated when
 
     # docs = models.ManyToManyField()
-    #
-    # --> remove "TASKS", use project as task
 
     # -> add some fields related: UML, docs, ...
     """
@@ -25,5 +23,4 @@ class Project(models.Model):
     Docs -> ~ Team, Project, My ...
     : ManyToMany Field, yield in parent
     """
-    #
 
