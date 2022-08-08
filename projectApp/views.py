@@ -170,7 +170,7 @@ def copy(request):
     """
     POST, /project/copy
     :param request:
-    :return:
+    :return: Json, {success or something err}
     """
     method_auth(request, 'POST')
 
