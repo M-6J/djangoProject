@@ -206,18 +206,25 @@ def team_detail(request, pk):
 def verify(team, oper, targ, typ):
     try:
         temp = Member.objects.filter(team__exact=team).get(user__exact=oper)
-        tar = Member.objects.filter(team__exact=team).get(user__exact=targ)
     except Member.DoesNotExist:
-        return '104'
+        return '104, not member'
 
     if typ == 1:  # invite
-        if temp.model.objects.filter(role__gt=0).exists():
-            pass
-    elif typ == 2:  # delete
+        if temp.role > 0:
+            tar = targ
+            return tar
+        else:
+            return '100, not allowed'
+    elif typ == 2:  # delete, pro, deg
+        try:
+            tar = Member.objects.filter(team__exact=team).get(user__exact=targ)
+        except Member.DoesNotExist:
+            return '105, does not exist'
+
         if temp.role > tar.role:
             return tar
-    else:
-        return '100'  # authority error
+        else:
+            return '100, not allowed'
 
 
 @csrf_exempt
@@ -237,8 +244,6 @@ def invite_member(request):  # add member by input: email
     team = Team.objects.get(pk=data.get('team_pk'))
     sender = User.objects.get(username__exact=data.get('sender'))
 
-    verify(team, sender, None, 1)
-
     rel_choice = data.get('rel_choice')
     rel = data.get('rel')
 
@@ -248,6 +253,12 @@ def invite_member(request):  # add member by input: email
         receiver = User.objects.get(email__exact=rel)
     else:
         return JsonResponse({'msg': 'err 101'})  # method error
+
+    receiver = verify(team, sender, receiver, 1)
+
+    if isinstance(receiver, str):
+        s = {'err': receiver}
+        return HttpResponse(content=json.dumps(s))
 
     if team.member.contains(receiver):
         return JsonResponse({'msg': 'err 102'})  # already member
@@ -316,9 +327,13 @@ def promote(request):
 
     tar = verify(team, oper, target, 2)
 
-    if tar.model.role < 2:
-        tar.model.role = tar.model.role + 1
-        tar.model.save()
+    if isinstance(tar, str):
+        s = {'err': tar}
+        return HttpResponse(content=json.dumps(s))
+
+    if tar.role < 1:
+        tar.role = tar.role + 1
+        tar.save()
     else:
         return JsonResponse({'msg': 'err 104'})  # not allowed
 
@@ -345,9 +360,13 @@ def degrade(request):
 
     tar = verify(team, oper, target, 2)
 
-    if tar.model.role > 0:
-        tar.model.role = tar.model.role - 1
-        tar.model.save()
+    if isinstance(tar, str):
+        s = {'err': tar}
+        return HttpResponse(content=json.dumps(s))
+
+    if tar.role > 0:
+        tar.role = tar.role - 1
+        tar.save()
     else:
         return JsonResponse({'msg': 'err 104'})
     return JsonResponse({'msg': 'success'})
