@@ -210,12 +210,12 @@ def verify(team, oper, targ, typ):
     tar = Member.objects.filter(team__exact=team).filter(user__exact=targ)
 
     if typ == 1:  # invite
-        if temp.exists() | temp.model.role > 0:
+        if temp.exists() and temp.model.objects.filter(role__gt=0).exists():
             pass
     elif typ == 2:  # delete
         if not tar.exists():
             return JsonResponse({'msg': 'err 103'})  # already deleted
-        elif temp.exists() | temp.model.role > tar.model.role:
+        elif temp.exists() and temp.model.role > tar.model.role:
             return tar
     else:
         return JsonResponse({'msg': 'err 100'})  # authority error
@@ -254,11 +254,12 @@ def invite_member(request):  # add member by input: email
         return JsonResponse({'msg': 'err 102'})  # already member
     else:
         content = team.name
-        target = team.pk
+        target = team.id
 
         verif = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(30))
 
-        notice = Notice.objects.create(sender=sender, receiver=receiver, content=content, team_pk=target, verif=verif)
+        notice = Notice.objects.create(sender=sender, receiver=receiver, content=content, verif=verif)
+        notice.team_pk = target
         notice.save()
 
         return JsonResponse({'msg': 'success'})

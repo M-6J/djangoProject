@@ -14,5 +14,6 @@ class Notice(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notice')
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='noticee')
     content = models.TextField(max_length=60)
-    team_pk = models.IntegerField
     verif = models.TextField(max_length=50)
+
+    team_id = models.IntegerField()
