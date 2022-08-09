@@ -204,19 +204,20 @@ def team_detail(request, pk):
 # ============================================ Managing Members Here From, =============================================
 # =========================================  add, del(quit), promote, degrade ==========================================
 def verify(team, oper, targ, typ):
-    temp = Member.objects.filter(team__exact=team).filter(user__exact=oper)
-    tar = Member.objects.filter(team__exact=team).filter(user__exact=targ)
+    try:
+        temp = Member.objects.filter(team__exact=team).get(user__exact=oper)
+        tar = Member.objects.filter(team__exact=team).get(user__exact=targ)
+    except Member.DoesNotExist:
+        return '104'
 
     if typ == 1:  # invite
-        if temp.exists() and temp.model.objects.filter(role__gt=0).exists():
+        if temp.model.objects.filter(role__gt=0).exists():
             pass
     elif typ == 2:  # delete
-        if not tar.exists():
-            return JsonResponse({'msg': 'err 103'})  # already deleted
-        elif temp.exists() and temp.model.role > tar.model.role:
+        if temp.role > tar.role:
             return tar
     else:
-        return JsonResponse({'msg': 'err 100'})  # authority error
+        return '100'  # authority error
 
 
 @csrf_exempt
@@ -283,7 +284,13 @@ def del_member(request):  # quit or del member, quit: self, del: manager or crea
 
     tar = verify(team, oper, target, 2)
 
+    if isinstance(tar, str):
+        s = {'err': tar}
+        return HttpResponse(content=json.dumps(s))
+
     team.member.remove(tar)
+    tar.delete()
+
     team.save()
 
     return JsonResponse({'msg': 'success'})

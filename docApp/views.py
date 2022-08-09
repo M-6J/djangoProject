@@ -1,9 +1,13 @@
+import json
+
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render
 
 from django.views.decorators.csrf import csrf_exempt
 
+from docApp.models import Doc
+from projectApp.models import Project
 from teamApp.models import Team, Member
 
 
@@ -26,34 +30,63 @@ def member_auth(user_pk, team_pk):
 
 # ======================================================================================================================
 # ======================================================================================================================
-# POST, create a doc
-#   return: success or err code
 @csrf_exempt
 def create(request):
     """
-
-    :param request:
-    :return:
+    POST, /docs/create/
+    :param request: title(str), team_pk(int: id), project_pk(int: id), username(str: username), content(str),
+                    description(str)
+    :return: Json, {success or err code}
     """
     method_auth(request, 'POST')
+    data = json.loads(request.body)
+    user = User.objects.get(username__exact=data.get('username'))
 
-    member_auth()
-    pass
+    member_auth(user.pk, data.get('team_pk'))
+
+    doc = Doc.objects.create(
+        title=data.get('title'),
+        description=data.get('description'),
+        content=data.get('content'),
+
+        team=Team.objects.get(pk=data.get('team_pk')),
+        project=Project.objects.get(pk=data.get('project_pk')),
+
+        author=User.objects.get(username__exact=user.username),
+        writers=User.objects.get(username__exact=user.username),
+        last_modi=User.objects.get(username__exact=user.username),
+    )
+    doc.save()
+
+    return JsonResponse({'msg': 'success'})
 
 
-# POST, update a doc
-#   return: success or err code
 @csrf_exempt
 def update(request):
     """
-
-    :param request:
-    :return:
+    POST, /docs/update/
+    :param request: title(str), doc_pk(int: id), team_pk(int: id), username(str), content(str),
+                    description(str)
+    :return: Json, {success or err code}
     """
     method_auth(request, 'POST')
+    data = json.loads(request.body)
+    user = User.objects.get(username__exact=data.get('username'))
 
-    member_auth()
-    pass
+    member_auth(user.pk, data.get('team_pk'))
+
+    doc = Doc.objects.get(pk=data.get('doc_pk'))
+
+    doc.title = data.get('title')
+    doc.content = data.get('content')
+    doc.description = data.get('description')
+
+    doc.writers.add(user)
+    doc.last_modi = user
+
+    doc.save()
+
+    return JsonResponse({'msg': 'success'})
 
 
 # ======================================================================================================================
@@ -64,9 +97,9 @@ def update(request):
 @csrf_exempt
 def detail(request):
     """
-
+    GET, /docs/detail/<int:pk> -> pk for doc's id
     :param request:
-    :return:
+    :return: Json, doc's detail
     """
     method_auth(request, 'GET')
 
@@ -81,7 +114,7 @@ def detail(request):
 @csrf_exempt
 def teams(request):
     """
-
+    GET, /docs/list1/<int:pk>
     :param request:
     :return:
     """
@@ -96,7 +129,7 @@ def teams(request):
 @csrf_exempt
 def projects(request):
     """
-
+    GET, /docs/list2/<int:pk>
     :param request:
     :return:
     """
@@ -111,7 +144,7 @@ def projects(request):
 @csrf_exempt
 def my(request):
     """
-
+    GET, /docs/list3/
     :param request:
     :return:
     """

@@ -7,7 +7,7 @@ from teamApp.models import Team
 
 class Doc(models.Model):
     title = models.CharField(max_length=50)
-    description = models.TextField
+    description = models.TextField(null=True, blank=True)
     content = models.TextField
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='docs_all')
