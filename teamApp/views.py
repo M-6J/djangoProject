@@ -178,24 +178,22 @@ def team_detail(request, pk):
         'name', 'description', 'region'
     ))
 
-    members = User.objects.filter(member__team__exact=team)
-    member_list = serializers.serialize('json', members, fields=(
-        'username', 'email'
-    ))
+    member_list = Member.objects.filter(team__exact=team)
+    data = [{
+        "username": i.user.username,
+        "role": i.role,
+        "email": i.user.email,
+    }for i in member_list]
 
     projects = Project.objects.filter(team__exact=team)
     project_list = serializers.serialize('json', projects, fields=(
         'name', 'description'
     ))
 
-    d1 = json.loads(detail)
-    d2 = json.loads(member_list)
-    d3 = json.loads(project_list)
-
     context = {
-        'detail': d1,
-        'members': d2,
-        'projects': d3
+        'detail': json.loads(detail),
+        'members': data,
+        'projects': json.loads(project_list),
     }
 
     dt = json.dumps(context, indent=2)
