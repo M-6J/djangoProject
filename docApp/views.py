@@ -48,15 +48,16 @@ def create(request):
     doc = Doc.objects.create(
         title=data.get('title'),
         description=data.get('description'),
-        content=data.get('content'),
+        contents=data.get('content'),
 
         team=Team.objects.get(pk=data.get('team_pk')),
         project=Project.objects.get(pk=data.get('project_pk')),
 
         author=User.objects.get(username__exact=user.username),
-        writers=User.objects.get(username__exact=user.username),
         last_modi=User.objects.get(username__exact=user.username),
     )
+
+    doc.writers.add(User.objects.get(username__exact=user.username))
     doc.save()
 
     return JsonResponse({'msg': 'success'})
@@ -79,7 +80,7 @@ def update(request):
     doc = Doc.objects.get(pk=data.get('doc_pk'))
 
     doc.title = data.get('title')
-    doc.content = data.get('content')
+    doc.contents = data.get('content')
     doc.description = data.get('description')
 
     doc.writers.add(user)
@@ -108,7 +109,7 @@ def detail(request, pk):
     data = {
         'title': doc.title,
         'description': doc.description,
-        'content': doc.content
+        'content': doc.contents
     }
 
     result = json.dumps(data)
@@ -140,7 +141,7 @@ def teams(request, pk):
         'updated_at': i.updated_at
     } for i in docs]
 
-    result = json.dumps(data)
+    result = json.dumps(data, default=str)
 
     return HttpResponse(content=result)
 
@@ -167,7 +168,7 @@ def projects(request, pk):
         'updated_at': i.updated_at
     } for i in docs]
 
-    result = json.dumps(data)
+    result = json.dumps(data, default=str)
 
     return HttpResponse(content=result)
 
@@ -181,7 +182,7 @@ def my(request):
     """
     method_auth(request, 'GET')
 
-    docs = Doc.objects.filter(writers=request.GET.get('username'))
+    docs = Doc.objects.filter(writers=User.objects.get(username__exact=request.GET.get('username')))
 
     # member_auth()
 
@@ -194,6 +195,6 @@ def my(request):
         'updated_at': i.updated_at
     } for i in docs]
 
-    result = json.dumps(data)
+    result = json.dumps(data, default=str)
 
     return HttpResponse(content=result)

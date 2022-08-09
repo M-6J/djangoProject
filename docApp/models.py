@@ -8,7 +8,7 @@ from teamApp.models import Team
 class Doc(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
-    content = models.TextField
+    contents = models.TextField(null=True, blank=True)
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='docs_all')
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='docs_proj')
