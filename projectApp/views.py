@@ -55,7 +55,7 @@ def manage(request):  # -> loads project list where: team(pk=pk)
         'name', 'created_at', 'updated_at'
     ))
 
-    return HttpResponse('json', data)
+    return HttpResponse(content=data)
 
 
 @csrf_exempt
