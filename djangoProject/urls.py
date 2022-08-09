@@ -21,4 +21,5 @@ urlpatterns = [
     path('team/', include('teamApp.urls')),
     path('profile/', include('profileApp.urls')),
     path('project/', include('projectApp.urls')),
+    path('doc/', include('docApp.urls'))
 ]

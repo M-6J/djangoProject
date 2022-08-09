@@ -1,7 +1,8 @@
 import json
 
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.core import serializers
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 
 from django.views.decorators.csrf import csrf_exempt
@@ -34,7 +35,7 @@ def member_auth(user_pk, team_pk):
 def create(request):
     """
     POST, /docs/create/
-    :param request: title(str), team_pk(int: id), project_pk(int: id), username(str: username), content(str),
+    :param request: title(str), team_pk(int: id), project_pk(int: id), username(str: 操作人用户名), content(str),
                     description(str)
     :return: Json, {success or err code}
     """
@@ -65,7 +66,7 @@ def create(request):
 def update(request):
     """
     POST, /docs/update/
-    :param request: title(str), doc_pk(int: id), team_pk(int: id), username(str), content(str),
+    :param request: title(str), doc_pk(int: id), team_pk(int: id), username(str: 操作人用户名), content(str),
                     description(str)
     :return: Json, {success or err code}
     """
@@ -95,60 +96,107 @@ def update(request):
 #   return: doc's detail (team name + pk, project name + pk, title, content, description, author, last modi,
 #                         last update date)
 @csrf_exempt
-def detail(request):
+def detail(request, pk):
     """
     GET, /docs/detail/<int:pk> -> pk for doc's id
-    :param request:
+    :param request: username(str: 操作人用户名)
     :return: Json, doc's detail
     """
     method_auth(request, 'GET')
 
-    member_auth()
-    pass
+    doc = Doc.objects.get(pk=pk)
+
+    # member_auth()
+
+    data = {
+        'title': doc.title,
+        'description': doc.description,
+        'content': doc.content
+    }
+
+    result = json.dumps(data)
+
+    return HttpResponse(content=result)
 
 
 # ======================================================================================================================
 # ======================================================================================================================
-# GET, list of docs - team's
-#   return:
 @csrf_exempt
-def teams(request):
+def teams(request, pk):
     """
-    GET, /docs/list1/<int:pk>
-    :param request:
+    GET, /docs/list1/<int:pk> -> pk for team
+    :param request: username(str: 操作人用户名)
+    :return: json, docs' list
+    """
+    method_auth(request, 'GET')
+
+    docs = Doc.objects.filter(team_id=pk)
+
+    # member_auth()
+
+    data = [{
+        'pk': i.pk,
+        'title': i.title,
+        'description': i.description,
+        'author': i.author.username,
+        'last_writer': i.last_modi.username,
+        'updated_at': i.updated_at
+    } for i in docs]
+
+    result = json.dumps(data)
+
+    return HttpResponse(content=result)
+
+
+@csrf_exempt
+def projects(request, pk):
+    """
+    GET, /docs/list2/<int:pk> -> pk for project
+    :param request: username(str: 操作人用户名)
     :return:
     """
     method_auth(request, 'GET')
 
-    member_auth()
-    pass
+    docs = Doc.objects.filter(project_id=pk)
+
+    # member_auth()
+
+    data = [{
+        'pk': i.pk,
+        'title': i.title,
+        'description': i.description,
+        'author': i.author.username,
+        'last_writer': i.last_modi.username,
+        'updated_at': i.updated_at
+    } for i in docs]
+
+    result = json.dumps(data)
+
+    return HttpResponse(content=result)
 
 
-# GET, list of docs - projects'
-#   return:
-@csrf_exempt
-def projects(request):
-    """
-    GET, /docs/list2/<int:pk>
-    :param request:
-    :return:
-    """
-    method_auth(request, 'GET')
-
-    member_auth()
-    pass
-
-
-# GET, list of docs - my
-#   return:
 @csrf_exempt
 def my(request):
     """
     GET, /docs/list3/
-    :param request:
+    :param request: username(str: 操作人用户名)
     :return:
     """
     method_auth(request, 'GET')
 
-    member_auth()
-    pass
+    docs = Doc.objects.filter(writers=request.GET.get('username'))
+
+    # member_auth()
+
+    data = [{
+        'pk': i.pk,
+        'title': i.title,
+        'description': i.description,
+        'author': i.author.username,
+        'last_writer': i.last_modi.username,
+        'updated_at': i.updated_at
+    } for i in docs]
+
+    result = json.dumps(data)
+
+    return HttpResponse(content=result)
