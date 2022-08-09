@@ -92,9 +92,6 @@ def update(request):
 
 # ======================================================================================================================
 # ======================================================================================================================
-# GET, detail of a doc
-#   return: doc's detail (team name + pk, project name + pk, title, content, description, author, last modi,
-#                         last update date)
 @csrf_exempt
 def detail(request, pk):
     """
