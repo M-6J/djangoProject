@@ -20,6 +20,7 @@ def method_auth(request, method):
 
 # ================================================= Notice Here From, ==================================================
 # ===============================================  view, accept(delete) ================================================
+@csrf_exempt
 def notice_view(request):
     """
     GET, /profile/notices
@@ -56,6 +57,7 @@ def notice_view(request):
     return HttpResponse(content=notice_list)
 
 
+@csrf_exempt
 def accept(request, verif):  # accept invite with verif code: verif code generated in teamApp invite
     """ -> accept invite, url is provided in notice_view (above api)
     POST, /profile/accept_invite/<str:verif>
@@ -65,9 +67,9 @@ def accept(request, verif):  # accept invite with verif code: verif code generat
                         {'msg': 'success'} or {'errcode'}
                     ]
     """
-    if Notice.objects.exists(verif__exact=verif):
+    if Notice.objects.filter(verif__exact=verif).exists():
         notice = Notice.objects.get(verif__exact=verif)
-        target = Team.objects.get(pk=notice.team_pk)
+        target = Team.objects.get(pk=notice.team_id)
 
         receiver = Member.objects.create(user=notice.receiver, role=0)
 
