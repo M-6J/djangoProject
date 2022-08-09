@@ -52,7 +52,7 @@ def manage(request):  # -> loads project list where: team(pk=pk)
     projects = Project.objects.filter(team_id__exact=team_pk)
 
     data = serializers.serialize('json', projects, fields=(
-        'name', 'created_at', 'updated_at'
+        'name', 'description', 'created_at', 'updated_at'
     ))
 
     return HttpResponse(content=data)
