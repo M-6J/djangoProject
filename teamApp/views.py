@@ -268,8 +268,7 @@ def invite_member(request):  # add member by input: email
 
         verif = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(40))
 
-        notice = Notice.objects.create(sender=sender, receiver=receiver, content=content, verif=verif)
-        notice.team_pk = target
+        notice = Notice.objects.create(sender=sender, receiver=receiver, content=content, verif=verif, team_id=target)
         notice.save()
 
         return JsonResponse({'msg': 'success'})
