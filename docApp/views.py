@@ -1,9 +1,7 @@
 import json
 
 from django.contrib.auth.models import User
-from django.core import serializers
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -97,6 +95,7 @@ def update(request):
 def detail(request, pk):
     """
     GET, /docs/detail/<int:pk> -> pk for doc's id
+    :param pk:
     :param request: username(str: 操作人用户名)
     :return: Json, doc's detail
     """
@@ -119,10 +118,28 @@ def detail(request, pk):
 
 # ======================================================================================================================
 # ======================================================================================================================
+def serializer(docs):
+    data = [{
+        'pk': i.pk,
+        'title': i.title,
+        'description': i.description,
+        'author': i.author.username,
+        'last_writer': i.last_modi.username,
+        'updated_at': i.updated_at
+    } for i in docs]
+
+    result = json.dumps(data, default=str)
+
+    return result
+
+
+# ======================================================================================================================
+# ======================================================================================================================
 @csrf_exempt
 def teams(request, pk):
     """
     GET, /docs/list1/<int:pk> -> pk for team
+    :param pk:
     :param request: username(str: 操作人用户名)
     :return: json, docs' list
     """
@@ -132,16 +149,7 @@ def teams(request, pk):
 
     # member_auth()
 
-    data = [{
-        'pk': i.pk,
-        'title': i.title,
-        'description': i.description,
-        'author': i.author.username,
-        'last_writer': i.last_modi.username,
-        'updated_at': i.updated_at
-    } for i in docs]
-
-    result = json.dumps(data, default=str)
+    result = serializer(docs)
 
     return HttpResponse(content=result)
 
@@ -150,6 +158,7 @@ def teams(request, pk):
 def projects(request, pk):
     """
     GET, /docs/list2/<int:pk> -> pk for project
+    :param pk:
     :param request: username(str: 操作人用户名)
     :return:
     """
@@ -159,16 +168,7 @@ def projects(request, pk):
 
     # member_auth()
 
-    data = [{
-        'pk': i.pk,
-        'title': i.title,
-        'description': i.description,
-        'author': i.author.username,
-        'last_writer': i.last_modi.username,
-        'updated_at': i.updated_at
-    } for i in docs]
-
-    result = json.dumps(data, default=str)
+    result = serializer(docs)
 
     return HttpResponse(content=result)
 
@@ -186,15 +186,6 @@ def my(request):
 
     # member_auth()
 
-    data = [{
-        'pk': i.pk,
-        'title': i.title,
-        'description': i.description,
-        'author': i.author.username,
-        'last_writer': i.last_modi.username,
-        'updated_at': i.updated_at
-    } for i in docs]
-
-    result = json.dumps(data, default=str)
+    result = serializer(docs)
 
     return HttpResponse(content=result)
