@@ -14,9 +14,9 @@ from teamApp.models import Team, Member
 
 def method_auth(request, method):
     if request.method == method:
-        pass
+        return 'pass'
     else:
-        return JsonResponse({'msg': 'err 200'})
+        return 'method is not allowed'
 
 
 # ============================================= Managing Team Here From, ===============================================
@@ -40,7 +40,10 @@ def team_managing(request):
                     ]
     """
 
-    method_auth(request, 'GET')
+    t = method_auth(request, 'GET')
+    if t is not 'pass':
+        r = json.dumps({'msg': t})
+        return HttpResponse(content=r)
 
     username = request.GET.get('username', None)
 
@@ -62,7 +65,10 @@ def team_list(request):
     :return: ..
     """
 
-    method_auth(request, 'GET')
+    t = method_auth(request, 'GET')
+    if t is not 'pass':
+        r = json.dumps({'msg': t})
+        return HttpResponse(content=r)
 
     username = request.GET.get('username')
 
@@ -93,7 +99,10 @@ def team_create(request):
                     ]
     """
 
-    method_auth(request, 'POST')
+    t = method_auth(request, 'POST')
+    if t is not 'pass':
+        r = json.dumps({'msg': t})
+        return HttpResponse(content=r)
 
     data = json.loads(request.body)
 
@@ -170,7 +179,10 @@ def team_detail(request, pk):
                     ]
     """
 
-    method_auth(request, 'GET')
+    t = method_auth(request, 'GET')
+    if t is not 'pass':
+        r = json.dumps({'msg': t})
+        return HttpResponse(content=r)
 
     team = Team.objects.get(pk=pk)
 
@@ -203,28 +215,31 @@ def team_detail(request, pk):
 
 # ============================================ Managing Members Here From, =============================================
 # =========================================  add, del(quit), promote, degrade ==========================================
-def verify(team, oper, targ, typ):
+def verify(team, oper, targ, typ, meth):
+    if meth is not 'pass':
+        return meth
+
     try:
         temp = Member.objects.filter(team__exact=team).get(user__exact=oper)
     except Member.DoesNotExist:
-        return '104, not member'
+        return 'user is not member'
 
     if typ == 1:  # invite
         if temp.role > 0:
             tar = targ
             return tar
         else:
-            return '100, not allowed'
+            return 'authority not allowed'
     elif typ == 2:  # delete, pro, deg
         try:
             tar = Member.objects.filter(team__exact=team).get(user__exact=targ)
         except Member.DoesNotExist:
-            return '105, does not exist'
+            return 'target does not exist'
 
         if temp.role > tar.role:
             return tar
         else:
-            return '100, not allowed'
+            return 'authority is not allowed'
 
 
 @csrf_exempt
@@ -237,7 +252,7 @@ def invite_member(request):  # add member by input: email
                     ]
     """
 
-    method_auth(request, 'POST')
+    meth = method_auth(request, 'POST')
 
     data = json.loads(request.body)
 
@@ -254,7 +269,7 @@ def invite_member(request):  # add member by input: email
     else:
         return JsonResponse({'msg': 'err 101'})  # method error
 
-    receiver = verify(team, sender, receiver, 1)
+    receiver = verify(team, sender, receiver, 1, meth)
 
     if isinstance(receiver, str):
         s = {'err': receiver}
@@ -284,7 +299,7 @@ def del_member(request):  # quit or del member, quit: self, del: manager or crea
                     ]
     """
 
-    method_auth(request, 'POST')
+    meth = method_auth(request, 'POST')
 
     data = json.loads(request.body)
 
@@ -292,7 +307,7 @@ def del_member(request):  # quit or del member, quit: self, del: manager or crea
     oper = User.objects.get(username__exact=data.get('oper'))
     target = User.objects.get(username__exact=data.get('target'))
 
-    tar = verify(team, oper, target, 2)
+    tar = verify(team, oper, target, 2, meth)
 
     if isinstance(tar, str):
         s = {'err': tar}
@@ -316,7 +331,7 @@ def promote(request):
                     ]
     """
 
-    method_auth(request, 'POST')
+    meth = method_auth(request, 'POST')
 
     data = json.loads(request.body)
 
@@ -324,7 +339,7 @@ def promote(request):
     oper = User.objects.get(username__exact=data.get('oper'))
     target = User.objects.get(username__exact=data.get('target'))
 
-    tar = verify(team, oper, target, 2)
+    tar = verify(team, oper, target, 2, meth)
 
     if isinstance(tar, str):
         s = {'err': tar}
@@ -349,7 +364,7 @@ def degrade(request):
                     ]
     """
 
-    method_auth(request, 'POST')
+    meth = method_auth(request, 'POST')
 
     data = json.loads(request.body)
 
@@ -357,7 +372,7 @@ def degrade(request):
     oper = User.objects.get(username__exact=data.get('oper'))
     target = User.objects.get(username__exact=data.get('target'))
 
-    tar = verify(team, oper, target, 2)
+    tar = verify(team, oper, target, 2, meth)
 
     if isinstance(tar, str):
         s = {'err': tar}

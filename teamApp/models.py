@@ -11,7 +11,6 @@ class Team(models.Model):
         (4, 'Devops Team'),
         (5, 'Marketing Team')
     )
-    # image = models.ImageField + url here
     name = models.CharField(max_length=30, null=False)
     description = models.TextField(max_length=200, null=True)
     region = models.IntegerField(choices=REGION_CHOICES, default=0)

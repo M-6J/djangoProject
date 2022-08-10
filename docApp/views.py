@@ -12,9 +12,9 @@ from teamApp.models import Team, Member
 
 def method_auth(request, method):
     if request.method == method:
-        pass
+        return 'pass'
     else:
-        return JsonResponse({'msg': 'err 200'})
+        return 'method is not allowed'
 
 
 def member_auth(user_pk, team_pk):
@@ -22,9 +22,24 @@ def member_auth(user_pk, team_pk):
     team = Team.objects.get(pk=team_pk)
 
     if Member.objects.filter(team__exact=team).filter(user__exact=user).exists():
-        pass
+        return 'pass'
     else:
-        return JsonResponse({'msg': 'err 501'})
+        return 'user is not member'
+
+
+def auth_(msg1, msg2):
+    if msg1 is not 'pass':
+        err = {'msg': msg1}
+        return json.dumps(err)
+    elif msg2 is not 'pass':
+        err = {'msg': msg2}
+        return json.dumps(err)
+    else:
+        return None
+
+
+def jl(data):
+    return json.loads(data)
 
 
 # ======================================================================================================================
@@ -37,11 +52,13 @@ def create(request):
                     description(str)
     :return: Json, {success or err code}
     """
-    method_auth(request, 'POST')
-    data = json.loads(request.body)
+    data = jl(request.body)
     user = User.objects.get(username__exact=data.get('username'))
 
-    member_auth(user.pk, data.get('team_pk'))
+    t = auth_(method_auth(request, 'POST'), member_auth(user.pk, data.get('team_pk')))
+
+    if isinstance(t, str):
+        return HttpResponse(content=t)
 
     doc = Doc.objects.create(
         title=data.get('title'),
@@ -69,11 +86,13 @@ def update(request):
                     description(str)
     :return: Json, {success or err code}
     """
-    method_auth(request, 'POST')
-    data = json.loads(request.body)
+    data = jl(request.body)
     user = User.objects.get(username__exact=data.get('username'))
 
-    member_auth(user.pk, data.get('team_pk'))
+    t = auth_(method_auth(request, 'POST'), member_auth(user.pk, data.get('team_pk')))
+
+    if isinstance(t, str):
+        return HttpResponse(content=t)
 
     doc = Doc.objects.get(pk=data.get('doc_pk'))
 
@@ -99,11 +118,17 @@ def detail(request, pk):
     :param request: username(str: 操作人用户名)
     :return: Json, doc's detail
     """
-    method_auth(request, 'GET')
+    msg1 = method_auth(request, 'GET')
 
+    user = User.objects.get(username__exact=request.GET.get('username'))
     doc = Doc.objects.get(pk=pk)
 
-    # member_auth()
+    msg2 = member_auth(user.pk, doc.team.pk)
+
+    t = auth_(msg1, msg2)
+
+    if isinstance(t, str):
+        return HttpResponse(content=t)
 
     data = {
         'title': doc.title,
@@ -133,8 +158,6 @@ def serializer(docs):
     return result
 
 
-# ======================================================================================================================
-# ======================================================================================================================
 @csrf_exempt
 def teams(request, pk):
     """
@@ -143,11 +166,17 @@ def teams(request, pk):
     :param request: username(str: 操作人用户名)
     :return: json, docs' list
     """
-    method_auth(request, 'GET')
+    msg1 = method_auth(request, 'GET')
 
+    user = User.objects.get(username__exact=request.GET.get('username'))
     docs = Doc.objects.filter(team_id=pk)
 
-    # member_auth()
+    msg2 = member_auth(user.pk, pk)
+
+    t = auth_(msg1, msg2)
+
+    if isinstance(t, str):
+        return HttpResponse(content=t)
 
     result = serializer(docs)
 
@@ -162,11 +191,19 @@ def projects(request, pk):
     :param request: username(str: 操作人用户名)
     :return:
     """
-    method_auth(request, 'GET')
+    msg1 = method_auth(request, 'GET')
+
+    user = User.objects.get(username__exact=request.GET.get('username'))
+    team = Team.objects.get(project=Project.objects.get(pk=pk))
 
     docs = Doc.objects.filter(project_id=pk)
 
-    # member_auth()
+    msg2 = member_auth(user.pk, team.pk)
+
+    t = auth_(msg1, msg2)
+
+    if isinstance(t, str):
+        return HttpResponse(content=t)
 
     result = serializer(docs)
 
@@ -180,11 +217,13 @@ def my(request):
     :param request: username(str: 操作人用户名)
     :return:
     """
-    method_auth(request, 'GET')
+    msg = method_auth(request, 'GET')
+
+    if msg is not 'pass':
+        t = jl({'err': msg})
+        return HttpResponse(content=t)
 
     docs = Doc.objects.filter(writers=User.objects.get(username__exact=request.GET.get('username')))
-
-    # member_auth()
 
     result = serializer(docs)
 

@@ -13,16 +13,16 @@ from teamApp.models import Member, Team
 # ============================================ has to be refactored, gn ================================================
 def method_auth(request, method):
     if request.method == method:
-        pass
+        return 'pass'
     else:
-        return JsonResponse({'msg': 'err 200'})
+        return JsonResponse({'msg': 'method is not allowed'})
 
 
 def check_null(pk):
     if Project.objects.filter(pk=pk).exists():
-        pass
+        return 'pass'
     else:
-        return JsonResponse({'msg': 'err 200'})
+        return JsonResponse({'msg': 'project does not exist'})
 
 
 def member_auth(user_pk, team_pk):
@@ -30,9 +30,9 @@ def member_auth(user_pk, team_pk):
     team = Team.objects.get(pk=team_pk)
 
     if Member.objects.filter(team__exact=team).filter(user__exact=user).exists():
-        pass
+        return 'pass'
     else:
-        return JsonResponse({'msg': 'err 501'})
+        return JsonResponse({'msg': 'user is not member'})
 
 
 # ======================================================================================================================
@@ -45,7 +45,13 @@ def manage(request):  # -> loads project list where: team(pk=pk)
                     username(str) -> 操作人员的用户名
     :return: Json (project list)
     """
-    method_auth(request, 'GET')
+    t = method_auth(request, 'GET')
+    if not isinstance(t, str):
+        return t
+
+    t = member_auth(User.objects.get(username__exact=request.GET.get('username')).pk, request.GET.get('team_pk'))
+    if not isinstance(t, str):
+        return t
 
     team_pk = request.GET.get('team_pk', None)
 
@@ -61,16 +67,24 @@ def manage(request):  # -> loads project list where: team(pk=pk)
 @csrf_exempt
 def detail(request, pk):  # read data in project where: project(pk=pk)
     """
-    GET, /project/detail/<int:pk>/ -> pk = pk for project
+    GET, /project/detail/<int:pk> -> pk = pk for project
     :param request:
     :param pk:  pk for project
     :return: Json (project's name and description)
     """
-    method_auth(request, 'GET')
+    t = method_auth(request, 'GET')
+    if not isinstance(t, str):
+        return t
 
     project = Project.objects.get(pk=pk)
 
-    check_null(pk)
+    t = check_null(pk)
+    if not isinstance(t, str):
+        return t
+
+    t = member_auth(User.objects.get(username__exact=request.GET.get('username')).pk, project.team.pk)
+    if not isinstance(t, str):
+        return t
 
     data = serializers.serialize('json', project, fields=(  # return fields of this project
         'name', 'description', 'created_at', 'updated_at'
@@ -83,10 +97,17 @@ def detail(request, pk):  # read data in project where: project(pk=pk)
 def search(request, pk):
     """
     GET, /project/search/<int:pk> -> pk for team(pk=pk)
+    :param pk:
     :param request: search(str) -> 'Guan Jian Ci'
     :return: Json
     """
-    method_auth(request, 'GET')
+    t = method_auth(request, 'GET')
+    if not isinstance(t, str):
+        return t
+
+    t = member_auth(User.objects.get(username__exact=request.GET.get('username')).pk, pk)
+    if not isinstance(t, str):
+        return t
 
     search_words = request.GET['search']
 
@@ -114,9 +135,15 @@ def create(request):  # -> create project where: team(pk=pk)
                     username(str) -> 操作人员的用户名
     :return: Json (success or other)
     """
-    method_auth(request, 'POST')
+    t = method_auth(request, 'POST')
+    if not isinstance(t, str):
+        return t
 
     data = json.loads(request.body)
+
+    t = member_auth(User.objects.get(username__exact=data.get('username')).pk, data.get('team_pk'))
+    if not isinstance(t, str):
+        return t
 
     project = Project.objects.create(
         name=data.get('project_name'),
@@ -137,11 +164,22 @@ def update(request):  # update data in project where: project(pk=pk)
                     username(str) -> 操作人员的用户名
     :return: Json (success or other)
     """
-    method_auth(request, 'POST')
+    t = method_auth(request, 'POST')
+    if not isinstance(t, str):
+        return t
 
     data = json.loads(request.body)
 
-    check_null(data.get('project_pk'))
+    t = member_auth(
+        User.objects.get(username__exact=data.get('username')).pk,
+        Project.objects.get(pk=data.get('project_pk')).team.pk
+        )
+    if not isinstance(t, str):
+        return t
+
+    t = check_null(data.get('project_pk'))
+    if not isinstance(t, str):
+        return t
 
     project = Project.objects.get(pk=data.get('project_pk'))
 
@@ -160,11 +198,22 @@ def delete(request):  # delete project where: project(pk=pk)
                     username(str) -> 操作人员的用户名
     :return: Json (success or other)
     """
-    method_auth(request, 'POST')
+    t = method_auth(request, 'POST')
+    if not isinstance(t, str):
+        return t
 
     data = json.loads(request.body)
 
-    check_null(data.get('project_pk'))
+    t = member_auth(
+        User.objects.get(username__exact=data.get('username')).pk,
+        Project.objects.get(pk=data.get('project_pk')).team.pk
+        )
+    if not isinstance(t, str):
+        return t
+
+    t = check_null(data.get('project_pk'))
+    if not isinstance(t, str):
+        return t
 
     project = Project.objects.get(pk=data.get('project_pk'))
 
@@ -180,11 +229,15 @@ def copy(request):
     :param request: project_pk(int) -> pk for project(id=pk)
     :return: Json, {success or something err}
     """
-    method_auth(request, 'POST')
+    t = method_auth(request, 'POST')
+    if not isinstance(t, str):
+        return t
 
     data = json.loads(request.body)
 
-    check_null(data.get('project_pk'))
+    t = check_null(data.get('project_pk'))
+    if not isinstance(t, str):
+        return t
 
     origin = Project.objects.get(pk=data.get('project_pk'))
 

@@ -13,9 +13,9 @@ import json
 
 def method_auth(request, method):
     if request.method == method:
-        pass
+        return 'pass'
     else:
-        return JsonResponse({'msg': 'err 200'})
+        return {'msg': 'method is not allowed'}
 
 
 # ================================================= Notice Here From, ==================================================
@@ -41,8 +41,10 @@ def notice_view(request):
                         }
                     ]
     """
+    meth = method_auth(request, 'GET')
 
-    method_auth(request, 'GET')
+    if meth is not 'pass':
+        return HttpResponse(content=json.dumps(meth))
 
     receiver = User.objects.get(username__exact=request.GET.get('username'))
     notices = Notice.objects.filter(receiver__exact=receiver)
@@ -67,6 +69,11 @@ def accept(request, verif):  # accept invite with verif code: verif code generat
                         {'msg': 'success'} or {'errcode'}
                     ]
     """
+    meth = method_auth(request, 'POST')
+
+    if meth is not 'pass':
+        return HttpResponse(content=json.dumps(meth))
+
     if Notice.objects.filter(verif__exact=verif).exists():
         notice = Notice.objects.get(verif__exact=verif)
         target = Team.objects.get(pk=notice.team_id)
@@ -111,7 +118,7 @@ def signup(request):
 
             return JsonResponse({'msg': 'success'})
     else:
-        return JsonResponse({'msg': 'err 200'})  # method err
+        return JsonResponse({'msg': 'method is not allowed'})  # method err
 
 
 @csrf_exempt
@@ -132,27 +139,13 @@ def login(request):
             auth.login(request, user)
             return JsonResponse({'msg': 'success'})
         else:
-            return JsonResponse({'msg': 'err 202'})  # username doesn't exist
+            return JsonResponse({'msg': 'username or password is not matched'})
     else:
-        return JsonResponse({'msg': 'err 200'})
+        return JsonResponse({'msg': 'method is not allowed'})
 
 
 # ============================================= Profile Pages Here From, ===============================================
 # =================================================  detail and edit ===================================================
-@csrf_exempt
-def detail(request, pk):
-    method_auth(request, 'GET')
-
-    pass
-
-
-@csrf_exempt
-def edit(request):
-    method_auth(request, 'POST')
-
-    pass
-
-
 @csrf_exempt
 def add_friend(request):
     """

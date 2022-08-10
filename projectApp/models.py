@@ -9,18 +9,5 @@ class Project(models.Model):
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='project')
 
-    created_at = models.DateTimeField(auto_now_add=True)  # -> created when
-    updated_at = models.DateTimeField(auto_now=True)  # -> updated when
-
-    # docs = models.ManyToManyField()
-
-    # -> add some fields related: UML, docs, ...
-    """
-    UML -> X
-    
-    =============== WAIT ================
-    
-    Docs -> ~ Team, Project, My ...
-    : ManyToMany Field, yield in parent
-    """
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
